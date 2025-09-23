@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f7f372602254c4e828c75b25329e35, type: 3}
+  m_Name: SAOMainField
+  m_EditorClassIdentifier: 
+  gameSpeed: 0
+  stackSpeed: 0
+  bakeryProductionSpeed: 0
+  breadPrice: 0
+  customerSpeed: 0
+  customerMaxStackNum: 0
+  maxWantBreadNum: 0
+  minWantBreadNum: 0
+  playerSpeed: 0
+  playerMaxStackNum: 0
+  SFXVolume: 0
