@@ -20,6 +20,6 @@ MonoBehaviour:
   customerMaxStackNum: 0
   maxWantBreadNum: 0
   minWantBreadNum: 0
-  playerSpeed: 0
+  playerSpeed: 0.02
   playerMaxStackNum: 0
   SFXVolume: 0
