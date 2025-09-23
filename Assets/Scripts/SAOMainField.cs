@@ -26,5 +26,52 @@ public class SAOMainField : ScriptableObject
     [Header("오디오")]
     public float SFXVolume;
     
+    [Header("스택 관련")]
+    public StackAccess[] stackAccessRegister;
+
+    public bool CheackInputAble(StackContainer requestor, StackContainer host, EStackableObjects requestorObj)
+    {
+        foreach (StackAccess carrier in stackAccessRegister)
+        {
+            if (requestor.stackType == carrier.stackContainer)
+            {
+                foreach (StackableObjectAccess carrierObject in carrier.stackableObjectAccess)
+                {
+                    if (carrierObject.stackableObjectType == requestorObj)
+                    {
+                        foreach (EStackableType ablcContainer in carrierObject.inputAbleContainers)
+                        {
+                            if(ablcContainer == host.stackType) return true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        return false;
+    }
     
+    public bool CheackOutputAble(StackContainer requestor, StackContainer host, EStackableObjects requestorObj)
+    {
+        foreach (StackAccess carrier in stackAccessRegister)
+        {
+            if (requestor.stackType == carrier.stackContainer)
+            {
+                foreach (StackableObjectAccess carrierObject in carrier.stackableObjectAccess)
+                {
+                    if (carrierObject.stackableObjectType == requestorObj)
+                    {
+                        foreach (EStackableType ablcContainer in carrierObject.outputAbleContainers)
+                        {
+                            if(ablcContainer == host.stackType) return true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        return false;
+    }
 }

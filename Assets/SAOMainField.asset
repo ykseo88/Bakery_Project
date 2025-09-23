@@ -23,3 +23,20 @@ MonoBehaviour:
   playerSpeed: 0.02
   playerMaxStackNum: 0
   SFXVolume: 0
+  stackAccessRegister:
+  - stackContainer: 1
+    stackableObjectAccess:
+    - stackableObjectType: 0
+      inputAbleContainers: 05000000
+      outputAbleContainers: 02000000
+    - stackableObjectType: 1
+      inputAbleContainers: 06000000
+      outputAbleContainers: 0300000004000000
+  - stackContainer: 0
+    stackableObjectAccess:
+    - stackableObjectType: 0
+      inputAbleContainers: 05000000
+      outputAbleContainers: 02000000
+    - stackableObjectType: 2
+      inputAbleContainers: 
+      outputAbleContainers: 03000000

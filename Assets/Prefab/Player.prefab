@@ -884,6 +884,7 @@ Transform:
   - {fileID: 2929470082773406067}
   - {fileID: 8022265284767325251}
   - {fileID: 2011782836}
+  - {fileID: 5255639681026144345}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -917,6 +918,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxStacNum: 0
+  StactPoint: {fileID: 0}
+  StackHeightTerm: 0.2
   isHasStack: 0
 --- !u!1 &7164066232151868207
 GameObject:
@@ -1045,6 +1048,37 @@ Transform:
   m_Father: {fileID: 8773632281796565241}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 9.277, y: -21.394, z: -49.968}
+--- !u!1 &8264740389935603615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5255639681026144345}
+  m_Layer: 6
+  m_Name: StackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5255639681026144345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8264740389935603615}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.809, z: 0.711}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6120420828103477686}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8679193474256128519
 GameObject:
   m_ObjectHideFlags: 0

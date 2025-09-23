@@ -8,7 +8,7 @@ public class PlayerIdleState : IPlayerState
     private PlayerController playerController;
     public PlayerIdleState(PlayerController playerController) => this.playerController = playerController;
     private Animator animator;
-    private Stacable stacable;
+    private StackContainer stacable;
     
     public void Enter()
     {
