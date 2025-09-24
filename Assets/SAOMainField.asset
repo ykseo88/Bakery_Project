@@ -41,3 +41,4 @@ MonoBehaviour:
       inputAbleContainers: 
       outputAbleContainers: 03000000
   putTime: 0.2
+  putTerm: 0.2
