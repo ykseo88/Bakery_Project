@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -25,6 +26,7 @@ public class StackContainer : MonoBehaviour
     [SerializeField] protected float putTerm = 0.1f;
     public int maxStackNum = 10;
     public Transform stackPoint;
+    public AutoGrid autoGrid;
 
     public bool isHasStack;
     public EStackableType stackType;
@@ -32,11 +34,14 @@ public class StackContainer : MonoBehaviour
     public EStackableObjects currentStackObject = EStackableObjects.None;
     
     public int currentStackNum = 0;
+    
+    public event Action isStackCountChangedEvent;
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
         mainField = GameManager.Instance.mainField;
+        if(stackPoint !=  null) stackPoint.transform.TryGetComponent(out autoGrid);
     }
 
     // Update is called once per frame
@@ -102,14 +107,15 @@ public class StackContainer : MonoBehaviour
     
     public void GetStackObject(StackableObject stackableObject)
     {
-        // 이곳에서 호출 스택을 확인
-        StackTrace stackTrace = new StackTrace();
-        
-        // 스택 추적 정보를 문자열로 변환하여 출력
-        Debug.Log($"{gameObject.name}가 GetStackObject가 호출되었습니다. 호출 경로: \n" + stackTrace.ToString());
-        
         currentStack.Push(stackableObject);
-        if(stackPoint !=null)stackableObject.transform.SetParent(stackPoint.transform);
+        if(stackPoint !=null){stackableObject.transform.SetParent(stackPoint.transform);}
+        stackableObject.CheckParentGrid();
+        
+        if (stackableObject.transform.parent != null)
+        {
+            stackableObject.autoGrid.InsertElement(stackableObject.transform);
+        }
+        
     }
 
     public StackableObject GiveStackObject()

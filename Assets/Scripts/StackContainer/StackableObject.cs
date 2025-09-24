@@ -14,15 +14,28 @@ public class StackableObject : MonoBehaviour
 {
     public EStackableObjects type;
     [SerializeField] private SAOMainField mainField;
+    public AutoGrid autoGrid;
+
+    protected virtual void Start()
+    {
+        CheckParentGrid();
+    }
+
+    public void CheckParentGrid()
+    {
+        if(transform.parent != null) transform.parent.TryGetComponent(out autoGrid);
+    }
     
     protected IEnumerator MoveCoroutine(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer)
     {
         float currentTime = 0f;
+        Quaternion originRot =  transform.rotation;
         
         while (currentTime < mainField.putTime)
         {
             currentTime += Time.deltaTime;
-            transform.position = toStackContainer.GetBezierPoint(start, toStackContainer.stackPoint.transform.position, currentTime / mainField.putTime);
+            transform.position = toStackContainer.GetBezierPoint(start, toStackContainer.autoGrid.nextEmptyWorldPosition, currentTime / mainField.putTime);
+            transform.rotation = Quaternion.Lerp(originRot, Quaternion.Euler(toStackContainer.autoGrid.objRotation), currentTime / mainField.putTime);
             yield return null;
         }
 

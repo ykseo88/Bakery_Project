@@ -11,8 +11,9 @@ public class Bread : StackableObject
     private Collider col;
     private Rigidbody rb;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         transform.TryGetComponent(out col);
         transform.TryGetComponent(out rb);
     }

@@ -69,6 +69,9 @@ public class StackCarrier : StackContainer
         while (currentStack.Count > 0 && stackContainer.GetCurrentStack().Count < stackContainer.maxStackNum)
         {
             StackableObject tempSObj = GiveStackObject();
+            if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
+            tempSObj.transform.SetParent(null);
+            tempSObj.CheckParentGrid();
             tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this);
             yield return new WaitForSeconds(mainField.putTerm);
         }
@@ -79,6 +82,9 @@ public class StackCarrier : StackContainer
         while (stackContainer.GetCurrentStack().Count > 0 && currentStack.Count < maxStackNum)
         {
             StackableObject tempSObj = stackContainer.GiveStackObject();
+            if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
+            tempSObj.transform.SetParent(null);
+            tempSObj.CheckParentGrid();
             tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer);
             yield return new WaitForSeconds(mainField.putTerm);
         }
