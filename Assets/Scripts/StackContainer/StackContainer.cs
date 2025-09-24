@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public enum EStackableType
 {
@@ -21,49 +23,27 @@ public class StackContainer : MonoBehaviour
     protected SAOMainField mainField;
     [SerializeField] protected float putTime = 0.2f;
     [SerializeField] protected float putTerm = 0.1f;
-    [SerializeField] protected int maxStackNum = 10;
+    public int maxStackNum = 10;
     public Transform stackPoint;
 
     public bool isHasStack;
     public EStackableType stackType;
-    public List<EStackableObjects> stackObjects = new List<EStackableObjects>();
+    //public List<EStackableObjects> stackObjects = new List<EStackableObjects>();
     public EStackableObjects currentStackObject = EStackableObjects.None;
+    
+    public int currentStackNum = 0;
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         mainField = GameManager.Instance.mainField;
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
+        currentStackNum = currentStack.Count;
         UpdateCurrentStackableObject();
-    }
-
-    private IEnumerator GetStartCoroutine(StackableObject obj, Vector3 start, Vector3 end, StackContainer fromStackContainer)
-    {
-        while (fromStackContainer.GetIsZeroStack())
-        {
-            StartCoroutine(GetEffect(obj, start, end, fromStackContainer));
-            yield return new WaitForSeconds(putTerm);
-        }
-
-        
-    }
-
-    private IEnumerator GetEffect(StackableObject obj, Vector3 start, Vector3 end, StackContainer fromStackContainer)
-    {
-        float currentTime = 0f;
-        
-        while (currentTime < putTime)
-        {
-            currentTime += Time.deltaTime;
-            obj.transform.position = GetBezierPoint(start, end, currentTime / putTime);
-            yield return null;
-        }
-        
-        GetStackObject(obj);
     }
     
     public Vector3 GetBezierPoint(Vector3 start, Vector3 end, float t)
@@ -103,14 +83,11 @@ public class StackContainer : MonoBehaviour
             currentStackObject = currentStack.Peek().type;
             isHasStack = true;
         }
-
         else
         {
             currentStackObject = EStackableObjects.None;
             isHasStack = false;
         }
-            
-        
     }
 
     public bool GetIsFullStack()
@@ -125,7 +102,14 @@ public class StackContainer : MonoBehaviour
     
     public void GetStackObject(StackableObject stackableObject)
     {
+        // 이곳에서 호출 스택을 확인
+        StackTrace stackTrace = new StackTrace();
+        
+        // 스택 추적 정보를 문자열로 변환하여 출력
+        Debug.Log($"{gameObject.name}가 GetStackObject가 호출되었습니다. 호출 경로: \n" + stackTrace.ToString());
+        
         currentStack.Push(stackableObject);
+        if(stackPoint !=null)stackableObject.transform.SetParent(stackPoint.transform);
     }
 
     public StackableObject GiveStackObject()
@@ -133,8 +117,8 @@ public class StackContainer : MonoBehaviour
         return currentStack.Pop();
     }
 
-    public void GetStart(StackableObject obj, Vector3 start, Vector3 end, StackContainer fromStackContainer)
+    public Stack<StackableObject> GetCurrentStack()
     {
-        StartCoroutine(GetStartCoroutine(obj, start, end, fromStackContainer));
+        return currentStack;
     }
 }

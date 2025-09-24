@@ -5,16 +5,5 @@ using UnityEngine;
 
 public class StackInven : StackContainer
 {
-    void Start()
-    {
-        
-    }
-    
-    void Update()
-    {
-        
-    }
-
-    
     
 }

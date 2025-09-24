@@ -26,10 +26,10 @@ MonoBehaviour:
   stackAccessRegister:
   - stackContainer: 1
     stackableObjectAccess:
-    - stackableObjectType: 0
-      inputAbleContainers: 05000000
-      outputAbleContainers: 02000000
     - stackableObjectType: 1
+      inputAbleContainers: 02000000
+      outputAbleContainers: 05000000
+    - stackableObjectType: 2
       inputAbleContainers: 06000000
       outputAbleContainers: 0300000004000000
   - stackContainer: 0
@@ -40,3 +40,4 @@ MonoBehaviour:
     - stackableObjectType: 2
       inputAbleContainers: 
       outputAbleContainers: 03000000
+  putTime: 0.2

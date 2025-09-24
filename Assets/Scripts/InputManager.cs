@@ -100,7 +100,7 @@ public class InputManager : MonoBehaviour
         isClickCheck = true;
         ReadPosition();
         isTouchedEvent?.Invoke(_isTouched, _touchScreenCenterPosition);
-        Debug.Log("Touch Started at: " + context.ReadValue<float>());
+        //Debug.Log("Touch Started at: " + context.ReadValue<float>());
     }
 
     private void OnTouchCanceled(InputAction.CallbackContext context)
@@ -108,7 +108,7 @@ public class InputManager : MonoBehaviour
         _isTouched = false;
         ReadPosition();
         isTouchedEvent?.Invoke(_isTouched, _touchScreenCenterPosition);
-        Debug.Log("Touch Canceled.");
+        //Debug.Log("Touch Canceled.");
     }
 
     private void Click()

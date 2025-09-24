@@ -53,7 +53,6 @@ public class PlayerController : MonoBehaviour
         currentState?.Exit();
         currentState = newState;
         currentState.Enter();
-        Debug.Log($"현재 상태: {currentState}");
     }
 
     public Vector2 GetMoveValue()

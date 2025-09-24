@@ -132,4 +132,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  mainField: {fileID: 11400000, guid: e4da57bb09a78454ea828210b10e6a0d, type: 2}
   breadMaker: {fileID: 0}

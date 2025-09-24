@@ -29,6 +29,9 @@ public class SAOMainField : ScriptableObject
     [Header("스택 관련")]
     public StackAccess[] stackAccessRegister;
 
+    public float putTime = 0.2f;
+    public float putTerm = 1f;
+
     public bool CheackInputAble(StackContainer requestor, StackContainer host, EStackableObjects requestorObj)
     {
         foreach (StackAccess carrier in stackAccessRegister)

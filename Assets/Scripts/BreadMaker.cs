@@ -12,6 +12,7 @@ public class BreadMaker : MonoBehaviour
     [SerializeField] private Transform bakeTransform;
     [SerializeField] private int MaxBakedAmount;
     private Rigidbody rigidbody;
+    private StackContainer stackContainer;
     
     
     private bool isBakealbe = true;
@@ -20,10 +21,12 @@ public class BreadMaker : MonoBehaviour
     private void Start()
     {
         poolManager.SetPoolQueue(breadPrefab);
+        transform.TryGetComponent(out stackContainer);
     }
 
     private void Update()
     {
+        currentBakedAmount = stackContainer.GetCurrentStack().Count;
         if(isBakealbe && MaxBakedAmount > currentBakedAmount) MakeBread();
     }
 
