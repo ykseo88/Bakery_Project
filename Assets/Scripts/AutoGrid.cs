@@ -111,8 +111,6 @@ public class AutoGrid : MonoBehaviour
 
     public void SetGrid()
     {
-        Debug.Log("정렬");
-
         int firstAxis = 0;
         int secondAxis = 0;
         int lastAxis = 0;

@@ -37,6 +37,8 @@ public class StackContainer : MonoBehaviour
     
     public event Action isStackCountChangedEvent;
 
+    public bool stackMovealbe = true;
+
     // Start is called before the first frame update
     protected virtual void Start()
     {

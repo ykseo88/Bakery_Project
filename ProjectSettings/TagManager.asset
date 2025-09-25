@@ -5,16 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - InteractionZone
+  - Customer
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - StackableObject
   - Water
   - UI
-  - 
-  - 
-  - 
+  - IgnoreStackableObject
+  - Player
+  - Customer
   - 
   - 
   - 

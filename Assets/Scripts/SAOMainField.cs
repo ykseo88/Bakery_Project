@@ -1,6 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+[Serializable]
+public class SpriteByName
+{
+    public string name;
+    public Sprite sprite;
+}
 
 [CreateAssetMenu(fileName = "SAOMainField", menuName = "ScriptableObject/Main Field")]
 public class SAOMainField : ScriptableObject
@@ -18,6 +26,7 @@ public class SAOMainField : ScriptableObject
     public int customerMaxStackNum;
     public int maxWantBreadNum;
     public int minWantBreadNum;
+    public float customerSpawnTerm;
     
     [Header("플레이어")]
     public float playerSpeed;
@@ -28,6 +37,11 @@ public class SAOMainField : ScriptableObject
     
     [Header("스택 관련")]
     public StackAccess[] stackAccessRegister;
+    
+    [Header("스프라이트")]
+    public Sprite[] numberSprites;
+    public SpriteByName[] SpritesByName;
+    
 
     public float putTime = 0.2f;
     public float putTerm = 1f;
@@ -76,5 +90,20 @@ public class SAOMainField : ScriptableObject
         
         
         return false;
+    }
+    
+    public Sprite GetNumberSpriteByInt(int number)
+    {
+        return numberSprites[number];
+    }
+
+    public Sprite GetSpriteByName(string name)
+    {
+        foreach (SpriteByName sprite in SpritesByName)
+        {
+            if(name == sprite.name) return sprite.sprite;
+        }
+        
+        return null;
     }
 }

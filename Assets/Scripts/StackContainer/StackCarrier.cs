@@ -2,17 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class StackCarrier : StackContainer
 {
     private string INTERRACTIONZONE_TAG = "InteractionZone";
+
+    public bool allowInput = true;
+    public bool allowOutPut = true;
+    
+    private bool isaleadyMoveable = false;
+    
     // Start is called before the first frame update
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag(INTERRACTIONZONE_TAG))
         { 
-            Debug.Log($"{other.gameObject.name}과 상호작용");
+            //Debug.Log($"{other.gameObject.name}과 상호작용");
             other.transform.TryGetComponent(out StackContainer stackContainer);
             
             //둘 다 물건을 들고 있는데 양쪽 물건이 다른지 확인
@@ -44,28 +51,32 @@ public class StackCarrier : StackContainer
             //운반자가 창고에서 물건을 꺼낼 수 있는지 확인
             bool isOutputAble = mainField.CheackOutputAble(this, stackContainer, stackContainer.currentStackObject);
 
-            if (isInputAble)
+            if (isInputAble && allowInput && isaleadyMoveable == false && stackContainer.stackMovealbe)
             {
+                
                 StartCoroutine(GiveStart(stackContainer.stackPoint.position, stackContainer));
             }
             else
             {
-                Debug.Log($"못 넣음!");
+                //Debug.Log($"못 넣음!");
             }
             
-            if (isOutputAble)
+            if (isOutputAble && allowOutPut && isaleadyMoveable == false && stackContainer.stackMovealbe)
             {
+                
                 StartCoroutine(GetStart(stackPoint.position, stackContainer));
             }
             else
             {
-                Debug.Log($"못 꺼냄!");
+                //Debug.Log($"못 꺼냄!");
             }
         }
     }
 
     private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer)
     {
+        stackContainer.stackMovealbe = false;
+        isaleadyMoveable = true;
         while (currentStack.Count > 0 && stackContainer.GetCurrentStack().Count < stackContainer.maxStackNum)
         {
             StackableObject tempSObj = GiveStackObject();
@@ -75,10 +86,14 @@ public class StackCarrier : StackContainer
             tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this);
             yield return new WaitForSeconds(mainField.putTerm);
         }
+        isaleadyMoveable = false;
+        stackContainer.stackMovealbe = true;
     }
 
     private IEnumerator GetStart(Vector3 end, StackContainer stackContainer)
     {
+        stackContainer.stackMovealbe = false;
+        isaleadyMoveable = true;
         while (stackContainer.GetCurrentStack().Count > 0 && currentStack.Count < maxStackNum)
         {
             StackableObject tempSObj = stackContainer.GiveStackObject();
@@ -88,5 +103,17 @@ public class StackCarrier : StackContainer
             tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer);
             yield return new WaitForSeconds(mainField.putTerm);
         }
+        isaleadyMoveable = false;
+        stackContainer.stackMovealbe = true;
+    }
+
+    public void GetObject(Vector3 end, StackContainer stackContainer)
+    {
+        StartCoroutine(GetStart(end, stackContainer));
+    }
+    
+    public void GiveObject(Vector3 end, StackContainer stackContainer)
+    {
+        StartCoroutine(GiveStart(end, stackContainer));
     }
 }

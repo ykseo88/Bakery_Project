@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5810678963621194278}
   - component: {fileID: 4481572153445494956}
   - component: {fileID: 5625622973164769141}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Croassant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,4 +133,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   mainField: {fileID: 11400000, guid: e4da57bb09a78454ea828210b10e6a0d, type: 2}
+  autoGrid: {fileID: 0}
   breadMaker: {fileID: 0}

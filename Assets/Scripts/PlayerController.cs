@@ -19,8 +19,6 @@ public class PlayerController : MonoBehaviour
         ChangeState(new PlayerIdleState(this));
     }
     
-    
-
     private void Update()
     {
         if (joystickController.isOnJoystick)
@@ -59,6 +57,4 @@ public class PlayerController : MonoBehaviour
     {
         return moveValue;
     }
-    
-    
 }

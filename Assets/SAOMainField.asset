@@ -18,8 +18,9 @@ MonoBehaviour:
   breadPrice: 0
   customerSpeed: 0
   customerMaxStackNum: 0
-  maxWantBreadNum: 0
-  minWantBreadNum: 0
+  maxWantBreadNum: 5
+  minWantBreadNum: 1
+  customerSpawnTerm: 0.5
   playerSpeed: 0.02
   playerMaxStackNum: 0
   SFXVolume: 0
@@ -34,11 +35,23 @@ MonoBehaviour:
       outputAbleContainers: 0300000004000000
   - stackContainer: 0
     stackableObjectAccess:
-    - stackableObjectType: 0
-      inputAbleContainers: 05000000
+    - stackableObjectType: 1
+      inputAbleContainers: 03000000
       outputAbleContainers: 02000000
-    - stackableObjectType: 2
+    - stackableObjectType: 3
       inputAbleContainers: 
       outputAbleContainers: 03000000
+  numberSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  SpritesByName: []
   putTime: 0.2
   putTerm: 0.2
