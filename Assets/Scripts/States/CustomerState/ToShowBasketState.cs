@@ -25,8 +25,7 @@ public class ToShowBasketState : ICustomerState
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
         animator.SetTrigger(WALK);
-        WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.GetFreeWaitingSlot();
-        waitingSlot.isWait = true;
+        WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.GetEmptyWaitingSlot();
         waitPosition = waitingSlot.waitPoint.transform.position;
         wayPoint = customerController.CustomerManager.centerPoint.position;
         agent.SetDestination(wayPoint);

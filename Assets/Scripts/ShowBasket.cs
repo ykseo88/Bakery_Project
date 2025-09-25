@@ -5,42 +5,39 @@ using UnityEngine;
 public class ShowBasket : WaitingQueue
 {
     private StackContainer showBasketContainer;
-
-    protected override void Start()
+    private WaitingSlot usingSlot;
+    
+    protected void Awake()
     {
-        base.Start();
         transform.TryGetComponent(out showBasketContainer);
     }
 
-    protected override void Update()
+    protected void Update()
     {
-        base.Update();
-        SetNewCurrentCustomer();
-        AllowGetBread();
-    }
-
-    private void SetNewCurrentCustomer()
-    {
-        if (currentCustomer != null)
+        if (usingSlot != null)
         {
-            if (currentCustomer.CheckFullGetBread())
+            if (usingSlot.Customer.CheckFullGetBread())
             {
-                currentCustomer.customerManager.allowSpawnNum++;
-                GetWaitingSlotCurrentCustomer().isWait = false;
-                GetWaitingSlotCurrentCustomer().waitCustomerController = null;
-                var element = waitQueue.Dequeue();
-                if(waitQueue.Count > 0) currentCustomer = waitQueue.Peek();
-                Debug.Log("1번 교체");
+                usingSlot.Customer = null;
+                usingSlot = null;
+            }
+            else
+            {
+                // 다 받을떄까지 대기
+                return;
             }
         }
-    }
-
-    private void AllowGetBread()
-    {
-        if (currentCustomer !=  null)
+        else //슬롯이 Null이면 슬롯을 뽑음
         {
-            currentCustomer.transform.TryGetComponent(out StackCarrier customerStack);
-            if(customerStack.allowOutPut == false) customerStack.allowOutPut = true;
+            if (Count == 0) return;
+            
+            usingSlot = Dequeue();
+            usingSlot.Customer.transform.TryGetComponent(out StackCarrier customerStack);
+            
+            if (customerStack.allowOutPut == false)
+            {
+                customerStack.allowOutPut = true;
+            }
         }
     }
 }

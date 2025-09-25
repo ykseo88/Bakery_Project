@@ -14,9 +14,11 @@ public class WaitngPoint : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.transform.TryGetComponent(out CustomerController customer) && !CurrentWaitingQueue.ContainCustomer(customer) && customer.CurrentState.GetType() == typeof(WaitBreadState))
+        if (other.transform.TryGetComponent(out CustomerController customer) && 
+            !CurrentWaitingQueue.ContainCustomer(customer) && 
+            customer.CurrentState.GetType() == typeof(WaitBreadState))
         {
-            CurrentWaitingQueue.Add(true, customer);
+            CurrentWaitingQueue.Enqueue(customer);
         }
     }
 }

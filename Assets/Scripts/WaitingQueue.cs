@@ -1,87 +1,55 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
 public class WaitingSlot
 {
     public WaitngPoint waitPoint;
-    public bool isWait;
-    public CustomerController waitCustomerController;
-    public StackCarrier customerStackCarrier;
-
-    public WaitingSlot(WaitngPoint waitPoint, bool isWait,CustomerController customerController)
-    {
-        this.waitPoint = waitPoint;
-        this.isWait = isWait;
-        this.waitCustomerController = customerController;
-    }
+    public CustomerController Customer { get; set; }
+    
+    public bool IsEmpty => Customer == null;
 }
 
 public class WaitingQueue : MonoBehaviour
 {
     public List<WaitingSlot> waitingSlots = new List<WaitingSlot>();
-    public Queue<CustomerController> waitQueue = new Queue<CustomerController>();
     public int maxWaitingSlotNum = 3;
-    public int currentWaitingNum = 0;
-    public bool isWaitable = true;
+    private Queue<WaitingSlot> waitQueue = new Queue<WaitingSlot>();
     
-    public CustomerController currentCustomer;
-
-    protected virtual void Start()
+    public int  Count => waitQueue.Count;
+    public bool IsFull => GetEmptyWaitingSlot() == null;
+    
+    public WaitingSlot GetEmptyWaitingSlot()
     {
-        
+        return waitingSlots.FirstOrDefault(t => t.IsEmpty);
     }
     
-    protected virtual void Update()
+    public void Enqueue(CustomerController customerController)
     {
-        UpdateIsWaitable();
-    }
-
-    public void Add(CustomerController customerController)
-    {
-        waitingSlots[waitQueue.Count].waitCustomerController = customerController;
-        waitQueue.Enqueue(customerController);
-        //if(waitQueue.Count == 0) currentCustomer = customerController;
-        //waitQueue.Enqueue(customerController);
-    }
-
-    public void UpdateIsWaitable()
-    {
-        if(waitQueue.Count >= maxWaitingSlotNum) isWaitable = false;
-        else isWaitable = true;
-        
-        currentWaitingNum = waitQueue.Count;
-    }
-
-    public WaitingSlot GetFreeWaitingSlot()
-    {
-        foreach (WaitingSlot waitingSlot in waitingSlots)
+        var waitingSlot = GetEmptyWaitingSlot();
+        if (waitingSlot == null)
         {
-            if(waitingSlot.isWait == false) return waitingSlot;
+            //동적 추가를 하든 뭘 하든 처리
         }
+        else
+        {
+            waitingSlot.Customer = customerController;
+            waitQueue.Enqueue(waitingSlot);
+        }
+    }
 
-        return null;
+    public WaitingSlot Dequeue()
+    {
+        return waitQueue.Dequeue();
     }
 
     public bool ContainCustomer(CustomerController customer)
     {
-        foreach (CustomerController tempCustomer in waitQueue)
-        {
-            if (tempCustomer.Equals(customer)) return true;
-        }
-
-        return false;
+        return waitingSlots.Find(x=>x.Customer == customer) != null;
     }
-
-    public WaitingSlot GetWaitingSlotCurrentCustomer()
-    {
-        foreach (WaitingSlot waitingSlot in waitingSlots)
-        {
-            if(waitingSlot.waitCustomerController == currentCustomer) return waitingSlot;
-        }
-        
-        return null;
-    }
+    
+    
 }
