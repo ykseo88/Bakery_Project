@@ -18,6 +18,7 @@ public class ShowBasket : WaitingQueue
         {
             if (usingSlot.Customer.CheckFullGetBread())
             {
+                usingSlot.Customer.CustomerManager.allowSpawnNum++;
                 usingSlot.Customer = null;
                 usingSlot = null;
             }

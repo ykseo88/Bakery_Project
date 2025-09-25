@@ -23,7 +23,7 @@ public class ToCashDeskState : ICustomerState
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
         animator.SetTrigger(WALK);
-        wayPoint = customerController.CustomerManager.centerPoint.position;
+        wayPoint = customerController.CustomerManager.tempPoint.position;
         agent.SetDestination(wayPoint);
     }
 

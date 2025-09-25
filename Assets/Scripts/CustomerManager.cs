@@ -7,6 +7,7 @@ public class CustomerManager : MonoBehaviour
 {
     public Transform centerPoint;
     public Transform spawnPoint;
+    public Transform tempPoint;
     
     [SerializeField] private GameObject customerPrefab;
     [SerializeField] private PoolManager poolManager;

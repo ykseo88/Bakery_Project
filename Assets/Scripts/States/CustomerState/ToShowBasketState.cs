@@ -34,14 +34,14 @@ public class ToShowBasketState : ICustomerState
 
     public void Update()
     {
-        if (agent.remainingDistance <= 0.5f && !toShowBasket)
+        if (agent.remainingDistance <= 1f && !toShowBasket)
         {
             wayPoint = waitPosition;
             agent.SetDestination(wayPoint);
             toShowBasket = true;
         }
         
-        if (agent.remainingDistance <= 0.1f && toShowBasket)
+        if (agent.remainingDistance <= 1f && toShowBasket)
         {
             customerController.ChangeState(new WaitBreadState(customerController));
         }
