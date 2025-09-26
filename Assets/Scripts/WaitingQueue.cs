@@ -22,22 +22,24 @@ public class WaitingQueue : MonoBehaviour
     public int  Count => waitQueue.Count;
     public bool IsFull => GetEmptyWaitingSlot() == null;
     
-    public WaitingSlot GetEmptyWaitingSlot()
+    private WaitingSlot GetEmptyWaitingSlot()
     {
         return waitingSlots.FirstOrDefault(t => t.IsEmpty);
     }
     
-    public void Enqueue(CustomerController customerController)
+    public WaitingSlot Enqueue(CustomerController customerController)
     {
         var waitingSlot = GetEmptyWaitingSlot();
         if (waitingSlot == null)
         {
             //동적 추가를 하든 뭘 하든 처리
+            return null;
         }
         else
         {
             waitingSlot.Customer = customerController;
             waitQueue.Enqueue(waitingSlot);
+            return waitingSlot;
         }
     }
 

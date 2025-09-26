@@ -27,7 +27,7 @@ public class StackCarrier : StackContainer
                  && currentStackObject != EStackableObjects.None)
                 && currentStackObject != stackContainer.currentStackObject)
             {
-                Debug.LogError($"양측 물건이 다름!");
+                //Debug.LogError($"양측 물건이 다름!");
                 return;
             }
             
@@ -35,16 +35,16 @@ public class StackCarrier : StackContainer
             if (stackContainer.currentStackObject == EStackableObjects.None
                 && currentStackObject == EStackableObjects.None)
             {
-                Debug.LogError($"양측 빈손임!");
+                //Debug.LogError($"양측 빈손임!");
                 return;
             }
             
             //양쪽 다 꽉 찼는지 확인
             if (stackContainer.GetIsFullStack() && GetIsFullStack())
             {
-                Debug.LogError($"양측 꽉참!");
+                //Debug.LogError($"양측 꽉참!");
                 return;
-            }
+            }   
             
             //운반자가 이 창고에 들고있는 물건을 넣을 수 있는지 확인
             bool isInputAble = mainField.CheackInputAble(this, stackContainer, currentStackObject);

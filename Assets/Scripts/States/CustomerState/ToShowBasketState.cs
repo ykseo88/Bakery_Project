@@ -6,9 +6,13 @@ using UnityEngine.AI;
 
 public class ToShowBasketState : ICustomerState
 {
+    private enum Sequance
+    { toStopOverPoint, toWaitPoint }
+    
     private static readonly int WALK = Animator.StringToHash("Walk");
+    private const float arriveDistance = 0.5f;
+    
     private CustomerController customerController;
-    private Transform waitTransform;
     public ToShowBasketState(CustomerController customerController) => this.customerController = customerController;
 
     private Animator animator;
@@ -16,8 +20,12 @@ public class ToShowBasketState : ICustomerState
     private NavMeshAgent agent;
     private Vector3 waitPosition;
     private Vector3 wayPoint;
-
-    private bool toShowBasket = false;
+    private Vector3 stopOverPoint;
+    private float Distance;
+    
+    private Sequance currentSeauance = Sequance.toStopOverPoint;
+    
+    
     
     public void Enter()
     {
@@ -25,26 +33,18 @@ public class ToShowBasketState : ICustomerState
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
         animator.SetTrigger(WALK);
-        WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.GetEmptyWaitingSlot();
+        WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.Enqueue(customerController);
         waitPosition = waitingSlot.waitPoint.transform.position;
-        wayPoint = customerController.CustomerManager.centerPoint.position;
+        stopOverPoint = customerController.CustomerManager.centerPoint.position;
+        wayPoint = stopOverPoint;
         agent.SetDestination(wayPoint);
-        customerController.OnImpactEvent += ResetDestination();
+        customerController.OnImpactEvent += ResetDestination;
     }
 
     public void Update()
     {
-        if (agent.remainingDistance <= 1f && !toShowBasket)
-        {
-            wayPoint = waitPosition;
-            agent.SetDestination(wayPoint);
-            toShowBasket = true;
-        }
-        
-        if (agent.remainingDistance <= 1f && toShowBasket)
-        {
-            customerController.ChangeState(new WaitBreadState(customerController));
-        }
+        Distance = Vector3.Distance(customerController.transform.position, wayPoint);
+        CheckArrivePoint(Distance);
     }
 
     public void Exit()
@@ -52,9 +52,26 @@ public class ToShowBasketState : ICustomerState
         animator.ResetTrigger(WALK);
     }
 
-    private Action ResetDestination()
+    private void ResetDestination()
     {
         agent.SetDestination(wayPoint);
-        return null;
+    }
+
+    private void CheckArrivePoint(float distance)
+    {
+        if (distance <= arriveDistance)
+        {
+            switch (currentSeauance)
+            {
+                case Sequance.toStopOverPoint:
+                    wayPoint = waitPosition;
+                    agent.SetDestination(wayPoint);
+                    currentSeauance = Sequance.toWaitPoint;
+                    break;
+                case Sequance.toWaitPoint:
+                    customerController.ChangeState(new WaitBreadState(customerController));
+                    break;
+            }
+        }
     }
 }

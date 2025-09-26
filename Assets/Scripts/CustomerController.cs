@@ -10,11 +10,13 @@ public class CustomerController : MonoBehaviour
 {
     private const string PLAYER = "Player";
     private const string CUSTOMER = "Customer";
-    
+
+    public int PersonalId { get;  private set; }
     public Animator animator;
     private NavMeshAgent navMeshAgent;
     private ICustomerState currentState;
-    public CustomerManager customerManager;
+    
+    private CustomerManager customerManager;
     public CustomerManager CustomerManager => customerManager;
     
     [SerializeField] private WaitingQueue showBasket;
@@ -24,7 +26,7 @@ public class CustomerController : MonoBehaviour
     public GameObject stateBubble;
     public SpriteRenderer currentCustomerWantMark;
     public SpriteRenderer markWithNumber;
-    public TMP_Text NumberText;
+    public TMP_Text numberText;
 
     public int wantBreadNum;
     public StackContainer stackContainer;
@@ -50,7 +52,6 @@ public class CustomerController : MonoBehaviour
     {
         Debug.Log("현재 상태:" + currentState);
         currentState.Update();
-        
     }
     
     public void ChangeState(ICustomerState newState)
@@ -77,5 +78,10 @@ public class CustomerController : MonoBehaviour
         {
             OnImpactEvent?.Invoke();
         }
+    }
+
+    public void SetPersonalId(int personalId)
+    {
+        PersonalId = personalId;
     }
 }

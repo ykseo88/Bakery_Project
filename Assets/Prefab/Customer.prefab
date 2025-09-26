@@ -781,13 +781,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
-  customerManager: {fileID: 0}
   showBasket: {fileID: 0}
   mainField: {fileID: 11400000, guid: e4da57bb09a78454ea828210b10e6a0d, type: 2}
   stateBubble: {fileID: 7991367466151966797}
   currentCustomerWantMark: {fileID: 2693688284657807443}
   markWithNumber: {fileID: 7555260235747790009}
-  NumberText: {fileID: 989896320802446503}
+  numberText: {fileID: 989896320802446503}
   wantBreadNum: 0
   stackContainer: {fileID: 0}
   centerPoint: {fileID: 0}

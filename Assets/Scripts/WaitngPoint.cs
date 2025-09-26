@@ -18,6 +18,7 @@ public class WaitngPoint : MonoBehaviour
             !CurrentWaitingQueue.ContainCustomer(customer) && 
             customer.CurrentState.GetType() == typeof(WaitBreadState))
         {
+            Debug.Log($"인큐 : {customer.PersonalId}");
             CurrentWaitingQueue.Enqueue(customer);
         }
     }

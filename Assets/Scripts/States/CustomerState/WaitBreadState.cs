@@ -6,12 +6,14 @@ using UnityEngine.AI;
 public class WaitBreadState : ICustomerState
 {
     private static readonly int IDLE = Animator.StringToHash("Idle");
+    private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
     private const string BREAD = "Bread";
     private CustomerController customerController;
     public WaitBreadState(CustomerController customerController) => this.customerController = customerController;
     
 
     private Animator animator;
+    private AnimatorStateInfo stateInfo;
     private StackContainer stacable;
     private NavMeshAgent agent;
     
@@ -23,18 +25,20 @@ public class WaitBreadState : ICustomerState
         animator.SetTrigger(IDLE);
         customerController.stateBubble.SetActive(true);
         customerController.markWithNumber.enabled = true;
-        customerController.NumberText.enabled = true;
+        customerController.numberText.enabled = true;
+        customerController.markWithNumber.sprite = customerController.mainField.GetSpriteByName(BREAD);
     }
 
     public void Update()
     {
-        customerController.markWithNumber.sprite = customerController.mainField.GetSpriteByName(BREAD);
-        customerController.NumberText.SetText((customerController.wantBreadNum - customerController.stackContainer.currentStackNum).ToString());
+        customerController.numberText.SetText((customerController.wantBreadNum - customerController.stackContainer.currentStackNum).ToString());
+        if(stacable.isHasStack) animator.SetTrigger(STACK_IDLE);
         if(customerController.CheckFullGetBread()) customerController.ChangeState(new ToCashDeskState(customerController));
     }
 
     public void Exit()
     {
         animator.ResetTrigger(IDLE);
+        animator.ResetTrigger(STACK_IDLE);
     }
 }

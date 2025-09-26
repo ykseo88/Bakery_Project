@@ -44,6 +44,7 @@ public class CustomerManager : MonoBehaviour
             newCustomer.transform.TryGetComponent(out CustomerController customerController);
             customerController.SetCustomerManager(this);
             allCustomers.Add(customerController);
+            customerController.SetPersonalId(allCustomers.Count);
             allowSpawnNum--;
             StartCoroutine(CoolSpawnTerm());
         }
