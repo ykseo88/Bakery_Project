@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class CashDesk : WaitingQueue
 {
+    private StackContainer showBasketContainer;
     private WaitingSlot usingSlot;
     
     [SerializeField] private GameObject paperBagPrefab;
-    [SerializeField] private PoolManager poolManager;
+    [SerializeField] private ContacktZone contacktZone;
+    [SerializeField] private AutoGrid customerLine;
+    
+    [Header("위치")]
+    [SerializeField] private Transform customerOutPoint;
+    [SerializeField] private Transform paperBagPoint;
+    
 
     private bool isPaymentAvailable = false;
+    private bool isGetNextCustomer = true;
 
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
+        usingSlot = null;
         poolManager.SetPoolQueue(paperBagPrefab);
     }
     
@@ -20,9 +30,8 @@ public class CashDesk : WaitingQueue
     {
         if (usingSlot != null)
         {
-            if (usingSlot.Customer.CheckFullGetBread())
+            if (usingSlot.Customer.CheckGetPaperBag())
             {
-                usingSlot.Customer.CustomerManager.allowSpawnNum++;
                 usingSlot.Customer = null;
                 usingSlot = null;
             }
@@ -40,16 +49,38 @@ public class CashDesk : WaitingQueue
             usingSlot.Customer.transform.TryGetComponent(out StackCarrier customerStack);
 
             if (isPaymentAvailable == false) return;
+            usingSlot.Customer.SetIsGetPaperBag(true);
+            GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position, paperBagPoint.rotation);
+        }
+    }
+
+    public override WaitingSlot Enqueue(CustomerController customerController)
+    {
+        var waitingSlot = GetEmptyWaitingSlot();
+        if (waitingSlot == null && waitingSlots.Count < maxWaitingSlotNum)
+        {
+            poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
             
-            if (customerStack.allowOutPut == false)
-            {
-                customerStack.allowOutPut = true;
-            }
+            waitPoint.transform.SetParent(customerLine.transform);
+            customerLine.UpdateElements();
+            
+            WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint);
+            tempWaitingSlot.Customer = customerController;
+            waitingSlots.Add(tempWaitingSlot);
+            waitQueue.Enqueue(tempWaitingSlot);
+            return tempWaitingSlot;
+        }
+        else
+        {
+            waitingSlot.Customer = customerController;
+            waitQueue.Enqueue(waitingSlot);
+            return waitingSlot;
         }
     }
 
     public void SetPaymentAvailable(bool available)
     {
-        this.isPaymentAvailable = available;
+        isPaymentAvailable = available;
     }
+    
 }

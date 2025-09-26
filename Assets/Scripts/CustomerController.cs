@@ -29,6 +29,7 @@ public class CustomerController : MonoBehaviour
     public TMP_Text numberText;
 
     public int wantBreadNum;
+    private bool isHasPaperBag = false;
     public StackContainer stackContainer;
     
     public Transform centerPoint;
@@ -67,9 +68,19 @@ public class CustomerController : MonoBehaviour
         else return false;
     }
 
+    public bool CheckGetPaperBag()
+    {
+        return isHasPaperBag;
+    }
+
     public void SetCustomerManager(CustomerManager cm)
     {
         customerManager = cm;
+    }
+
+    public void SetIsGetPaperBag(bool isPaperBag)
+    {
+        isHasPaperBag = isPaperBag;
     }
 
     private void OnCollisionEnter(Collision other)

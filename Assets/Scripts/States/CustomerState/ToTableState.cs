@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ToTableState : ICustomerState
 {
+    private CustomerController customerController;
+    public ToTableState(CustomerController customerController) => this.customerController =  customerController;
     public void Enter()
     {
         

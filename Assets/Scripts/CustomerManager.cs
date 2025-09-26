@@ -12,8 +12,9 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private GameObject customerPrefab;
     [SerializeField] private PoolManager poolManager;
     [SerializeField] private SAOMainField mainField;
+    [SerializeField] private float goTableProbability;
     public ShowBasket showBasket;
-    public WaitingQueue CashDesk;
+    public CashDesk cashDesk;
 
     private bool isSpawnable = true;
     public int allowSpawnNum;
@@ -54,5 +55,10 @@ public class CustomerManager : MonoBehaviour
     {
         yield return new WaitForSeconds(mainField.customerSpawnTerm);
         isSpawnable = true;
+    }
+
+    public float GetGoTableProbability()
+    {
+        return goTableProbability;
     }
 }

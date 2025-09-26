@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DG.Tweening;
 
 public class ToShowBasketState : ICustomerState
 {
@@ -11,6 +12,7 @@ public class ToShowBasketState : ICustomerState
     
     private static readonly int WALK = Animator.StringToHash("Walk");
     private const float arriveDistance = 0.5f;
+    private const float rotateDuration = 0.5f;
     
     private CustomerController customerController;
     public ToShowBasketState(CustomerController customerController) => this.customerController = customerController;
@@ -19,6 +21,7 @@ public class ToShowBasketState : ICustomerState
     private StackContainer stacable;
     private NavMeshAgent agent;
     private Vector3 waitPosition;
+    private Quaternion waitRotation;
     private Vector3 wayPoint;
     private Vector3 stopOverPoint;
     private float Distance;
@@ -35,6 +38,7 @@ public class ToShowBasketState : ICustomerState
         animator.SetTrigger(WALK);
         WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.Enqueue(customerController);
         waitPosition = waitingSlot.waitPoint.transform.position;
+        waitRotation = waitingSlot.waitPoint.transform.rotation;
         stopOverPoint = customerController.CustomerManager.centerPoint.position;
         wayPoint = stopOverPoint;
         agent.SetDestination(wayPoint);
@@ -50,6 +54,8 @@ public class ToShowBasketState : ICustomerState
     public void Exit()
     {
         animator.ResetTrigger(WALK);
+        agent.updateRotation = false;
+        customerController.transform.DOLookAt(customerController.CustomerManager.showBasket.transform.position, rotateDuration, AxisConstraint.Y);
     }
 
     private void ResetDestination()

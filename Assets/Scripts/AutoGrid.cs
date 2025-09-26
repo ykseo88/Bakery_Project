@@ -30,12 +30,12 @@ public class AutoGrid : MonoBehaviour
     public Vector3 nextEmptyWorldPosition;
     public Vector3 nextEmptyLocalPosition = new Vector3(0, 0, 0);
     
-    private StackContainer stackContainer;
+    //private StackContainer stackContainer;
     // Start is called before the first frame update
     void Start()
     {
-        stackContainer = transform.root.GetComponentInChildren<StackContainer>();
-        stackContainer.isStackCountChangedEvent += UpdateElements;
+        //stackContainer = transform.root.GetComponentInChildren<StackContainer>();
+        //stackContainer.isStackCountChangedEvent += UpdateElements;
         UpdateElements();
     }
 
@@ -49,9 +49,13 @@ public class AutoGrid : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            if(elements.Contains(child)) elements.Add(child);
+            Debug.Log(child.name);
+            if (!elements.Contains(child))
+            {
+                Debug.Log(child.name + "새로 추가");
+                elements.Add(child);
+            }
         }
-
         SetGrid();
     }
 
@@ -228,7 +232,6 @@ public class AutoGrid : MonoBehaviour
     {
         if (elements.Count > 0)
         {
-            Transform tempElement = elements[^1];
             nextEmptyLocalPosition = new Vector3(spacing.x * currentCount.x, spacing.y * currentCount.y, spacing.z * currentCount.z);
         }
         else

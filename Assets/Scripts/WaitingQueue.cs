@@ -11,29 +11,49 @@ public class WaitingSlot
     public CustomerController Customer { get; set; }
     
     public bool IsEmpty => Customer == null;
+
+    public WaitingSlot(WaitngPoint waitPoint)
+    {
+        this.waitPoint = waitPoint;
+    }
 }
 
 public class WaitingQueue : MonoBehaviour
 {
     public List<WaitingSlot> waitingSlots = new List<WaitingSlot>();
     public int maxWaitingSlotNum = 3;
-    private Queue<WaitingSlot> waitQueue = new Queue<WaitingSlot>();
+    protected Queue<WaitingSlot> waitQueue = new Queue<WaitingSlot>();
+    [SerializeField] protected GameObject waitPointPrefab;
+    [SerializeField] protected PoolManager poolManager;
     
     public int  Count => waitQueue.Count;
     public bool IsFull => GetEmptyWaitingSlot() == null;
-    
-    private WaitingSlot GetEmptyWaitingSlot()
+
+    protected virtual void Start()
     {
-        return waitingSlots.FirstOrDefault(t => t.IsEmpty);
+        poolManager.SetPoolQueue(waitPointPrefab);
+    }
+
+    protected WaitingSlot GetEmptyWaitingSlot()
+    {
+        for (int i = 0; i < waitingSlots.Count; i++)
+        {
+            if(waitingSlots[i].IsEmpty) return waitingSlots[i];
+        }
+        return null;
     }
     
-    public WaitingSlot Enqueue(CustomerController customerController)
+    public virtual WaitingSlot Enqueue(CustomerController customerController)
     {
         var waitingSlot = GetEmptyWaitingSlot();
-        if (waitingSlot == null)
+        if (waitingSlot == null && waitingSlots.Count < maxWaitingSlotNum)
         {
-            //동적 추가를 하든 뭘 하든 처리
-            return null;
+            poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
+            waitPoint.transform.SetParent(transform);
+            WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint);
+            waitingSlots.Add(tempWaitingSlot);
+            waitQueue.Enqueue(tempWaitingSlot);
+            return tempWaitingSlot;
         }
         else
         {
@@ -51,6 +71,16 @@ public class WaitingQueue : MonoBehaviour
     public bool ContainCustomer(CustomerController customer)
     {
         return waitingSlots.Find(x=>x.Customer == customer) != null;
+    }
+
+    protected bool GetIsEmptyWaitingSlot()
+    {
+        foreach (WaitingSlot slot in waitingSlots)
+        {
+            if (slot.IsEmpty) return true;
+        }
+
+        return false;
     }
     
     
