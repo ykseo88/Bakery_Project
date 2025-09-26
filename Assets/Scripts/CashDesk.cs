@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CashDesk : WaitingQueue
 {
+    enum PayState
+    {
+        CustomerWaiting,
+        PaymentInProgress,
+        PaymentCompleted,
+        
+    }
+    
     private StackContainer showBasketContainer;
     private WaitingSlot usingSlot;
     
@@ -18,6 +27,9 @@ public class CashDesk : WaitingQueue
 
     private bool isPaymentAvailable = false;
     private bool isGetNextCustomer = true;
+    
+    private PayState currentPayState = PayState.CustomerWaiting;
+    private PaperBag currentPaperBag;
 
     protected override void Start()
     {
@@ -37,7 +49,25 @@ public class CashDesk : WaitingQueue
             }
             else
             {
-                // 다 받을떄까지 대기
+                if (isPaymentAvailable)
+                {
+                    switch (currentPayState)
+                    {
+                        case PayState.CustomerWaiting:
+                            GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position, paperBagPoint.rotation);
+                            tempPaperBag.transform.TryGetComponent(out currentPaperBag);
+                            currentPayState = PayState.PaymentInProgress;
+                            break;
+                        case PayState.PaymentInProgress:
+                            
+                            break;
+                        case PayState.PaymentCompleted:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+                else
                 return;
             }
         }
@@ -47,10 +77,6 @@ public class CashDesk : WaitingQueue
             
             usingSlot = Dequeue();
             usingSlot.Customer.transform.TryGetComponent(out StackCarrier customerStack);
-
-            if (isPaymentAvailable == false) return;
-            usingSlot.Customer.SetIsGetPaperBag(true);
-            GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position, paperBagPoint.rotation);
         }
     }
 
