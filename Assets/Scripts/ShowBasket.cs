@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShowBasket : WaitingQueue
 {
     private StackContainer showBasketContainer;
-    private WaitingSlot usingSlot;
+    private CustomerController usingCustomer;
     
     protected void Awake()
     {
@@ -14,13 +14,13 @@ public class ShowBasket : WaitingQueue
 
     protected void Update()
     {
-        if (usingSlot != null)
+        if (usingCustomer != null)
         {
-            if (usingSlot.Customer.CheckFullGetBread())
+            if (usingCustomer.CheckFullGetBread())
             {
-                usingSlot.Customer.CustomerManager.allowSpawnNum++;
-                usingSlot.Customer = null;
-                usingSlot = null;
+                usingCustomer.CustomerManager.allowSpawnNum++;
+                GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
+                usingCustomer = null;
             }
             else
             {
@@ -32,8 +32,8 @@ public class ShowBasket : WaitingQueue
         {
             if (Count == 0) return;
             
-            usingSlot = Dequeue();
-            usingSlot.Customer.transform.TryGetComponent(out StackCarrier customerStack);
+            usingCustomer = Dequeue();
+            usingCustomer.transform.TryGetComponent(out StackCarrier customerStack);
             
             if (customerStack.allowOutPut == false)
             {

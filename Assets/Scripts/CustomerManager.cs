@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CustomerManager : MonoBehaviour
 {
+    private const string CUSTOMER = "CUSTOMER_";
+    
     public Transform centerPoint;
     public Transform spawnPoint;
     public Transform tempPoint;
@@ -44,8 +46,10 @@ public class CustomerManager : MonoBehaviour
             newCustomer.transform.SetParent(null);
             newCustomer.transform.TryGetComponent(out CustomerController customerController);
             customerController.SetCustomerManager(this);
-            allCustomers.Add(customerController);
+            customerController.Reset();
+            if(allCustomers.Contains(customerController) == false)allCustomers.Add(customerController);
             customerController.SetPersonalId(allCustomers.Count);
+            customerController.gameObject.name = CUSTOMER + customerController.PersonalId;
             allowSpawnNum--;
             StartCoroutine(CoolSpawnTerm());
         }

@@ -6,10 +6,24 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
+public enum ECustomerStates
+{
+    ToShowBasketState,
+    WaitBreadState,
+    ToCashDeskState,
+    WaitPayState,
+    ToOutState,
+    ToTableState,
+    EatBreadState,
+}
+
 public class CustomerController : MonoBehaviour
 {
+    
+    
     private const string PLAYER = "Player";
     private const string CUSTOMER = "Customer";
+    private const float rightAngle = 90f;
 
     public int PersonalId { get;  private set; }
     public Animator animator;
@@ -17,7 +31,7 @@ public class CustomerController : MonoBehaviour
     private ICustomerState currentState;
     
     private CustomerManager customerManager;
-    public CustomerManager CustomerManager => customerManager;
+    public CustomerManager CustomerManager=> customerManager;
     
     [SerializeField] private WaitingQueue showBasket;
     public ICustomerState CurrentState => currentState;
@@ -30,28 +44,33 @@ public class CustomerController : MonoBehaviour
 
     public int wantBreadNum;
     private bool isHasPaperBag = false;
-    public StackContainer stackContainer;
+    public StackCarrier stackCarrier;
     
-    public Transform centerPoint;
+    private bool isArrivedQueuePoint = false;
+    
+    [SerializeField] private ECustomerStates debugCurrentState;
     
     public event Action OnImpactEvent;
     
     // Start is called before the first frame update
     void Start()
     {
-        transform.TryGetComponent(out animator);
-        transform.TryGetComponent(out navMeshAgent);
-        transform.TryGetComponent(out stackContainer);
-        ChangeState(new ToShowBasketState(this));
+        //ChangeState(new ToShowBasketState(this));
         
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
-        stackContainer.maxStackNum = wantBreadNum;
+        stackCarrier.maxStackNum = wantBreadNum;
+    }
+
+    private void OnEnable()
+    {
+        transform.TryGetComponent(out animator);
+        transform.TryGetComponent(out navMeshAgent);
+        transform.TryGetComponent(out stackCarrier);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("현재 상태:" + currentState);
         currentState.Update();
     }
     
@@ -64,7 +83,7 @@ public class CustomerController : MonoBehaviour
 
     public bool CheckFullGetBread()
     {
-        if (stackContainer.currentStackNum >= wantBreadNum) return true;
+        if (stackCarrier.currentStackNum >= wantBreadNum) return true;
         else return false;
     }
 
@@ -94,5 +113,32 @@ public class CustomerController : MonoBehaviour
     public void SetPersonalId(int personalId)
     {
         PersonalId = personalId;
+    }
+
+    public void SetIsArrivedQueuePoint(bool isArrived)
+    {
+        isArrivedQueuePoint = isArrived;
+    }
+    
+    public bool CheckIsArrivedQueuePoint()
+    {
+        return isArrivedQueuePoint;
+    }
+
+    public void SetDebugCurrentState(ECustomerStates state)
+    {
+        debugCurrentState = state;
+    }
+
+    public void Reset()
+    {
+        ChangeState(new ToShowBasketState(this));
+        
+        stackCarrier.ClearStack();
+        wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
+        stackCarrier.maxStackNum = wantBreadNum;
+        stackCarrier.autoGrid.objRotation.y -= rightAngle;
+        isHasPaperBag = false; 
+        isArrivedQueuePoint = false;
     }
 }

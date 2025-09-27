@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class EatBreadState : ICustomerState
 {
+    private CustomerController customerController;
+    
+    public EatBreadState(CustomerController customerController) => this.customerController = customerController;
+    
     public void Enter()
     {
-        
+        customerController.SetDebugCurrentState(ECustomerStates.ToCashDeskState);
     }
 
     public void Update()

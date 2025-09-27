@@ -57,3 +57,4 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: d0e306dc7c8603d4199e01fcfbfe2cb4, type: 3}
   putTime: 0.15
   putTerm: 0.2
+  putCurve: 1.5

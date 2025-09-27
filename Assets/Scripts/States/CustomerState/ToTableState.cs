@@ -8,7 +8,7 @@ public class ToTableState : ICustomerState
     public ToTableState(CustomerController customerController) => this.customerController =  customerController;
     public void Enter()
     {
-        
+        customerController.SetDebugCurrentState(ECustomerStates.ToTableState);
     }
 
     public void Update()

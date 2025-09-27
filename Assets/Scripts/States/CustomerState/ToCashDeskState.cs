@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DG.Tweening;
 
 public class ToCashDeskState : ICustomerState
 {
@@ -9,8 +10,7 @@ public class ToCashDeskState : ICustomerState
     { toStopOverPoint, toWaitPoint }
     
     private const float arriveDistance = 1.5f;
-    private const float arriveLineDistance = 0.1f;
-    private const float rotateDuration = 0.5f;
+    private const float rotateDuration = 0.1f;
     
     private static readonly int WALK = Animator.StringToHash("Walk");
     private static readonly int STACK_WALK = Animator.StringToHash("StackWalk");
@@ -26,6 +26,7 @@ public class ToCashDeskState : ICustomerState
     private Vector3 wayPoint;
     private Vector3 stopOverPoint;
     private float Distance;
+    private CashDesk cashDesk;
     
     private Sequance currentSeauance = Sequance.toStopOverPoint;
 
@@ -33,10 +34,14 @@ public class ToCashDeskState : ICustomerState
     
     public void Enter()
     {
+        customerController.SetDebugCurrentState(ECustomerStates.ToCashDeskState);
         customerController.transform.TryGetComponent(out stacable);
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
-        WaitingSlot waitingSlot = customerController.CustomerManager.cashDesk.Enqueue(customerController);
+        cashDesk = customerController.CustomerManager.cashDesk;
+        if(cashDesk.Count == 0) cashDesk.SetWaitingState();
+        cashDesk.Enqueue(customerController);
+        WaitingSlot waitingSlot = cashDesk.GetWaitingSlotOrNullByCustomer(customerController);
         waitPosition = waitingSlot.waitPoint.transform.position;
         waitRotation = waitingSlot.waitPoint.transform.rotation;
         stopOverPoint = customerController.CustomerManager.centerPoint.position;
@@ -45,13 +50,14 @@ public class ToCashDeskState : ICustomerState
         stacable.allowOutPut = false;
         stacable.allowInput = false;
         animator.SetTrigger(STACK_WALK);
-        agent.updateRotation = true;
+        customerController.SetIsArrivedQueuePoint(true);
+        agent.updateRotation = false;
     }
 
     public void Update()
     {
-        Distance = Vector3.Distance(customerController.transform.position, wayPoint);
-        CheckArrivePoint(Distance);
+        customerController.transform.DOLookAt(customerController.transform.position + agent.velocity.normalized, rotateDuration, AxisConstraint.Y);
+        CheckArrivePoint();
     }
 
     public void Exit()
@@ -59,21 +65,26 @@ public class ToCashDeskState : ICustomerState
         
     }
     
-    private void CheckArrivePoint(float distance)
+    private void CheckArrivePoint()
     {
-        if (distance <= arriveDistance)
+        switch (currentSeauance)
         {
-            switch (currentSeauance)
-            {
-                case Sequance.toStopOverPoint:
+            case Sequance.toStopOverPoint:
+                if (agent.remainingDistance <= arriveDistance)
+                {
                     wayPoint = waitPosition;
                     agent.SetDestination(wayPoint);
                     currentSeauance = Sequance.toWaitPoint;
-                    break;
-                case Sequance.toWaitPoint:
+                }
+                break;
+            case Sequance.toWaitPoint:
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
                     customerController.ChangeState(new WaitPayState(customerController));
-                    break;
-            }
+                }
+                break;
         }
+        
+        
     }
 }

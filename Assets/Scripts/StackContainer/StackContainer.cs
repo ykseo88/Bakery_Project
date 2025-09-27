@@ -55,32 +55,23 @@ public class StackContainer : MonoBehaviour
     
     public Vector3 GetBezierPoint(Vector3 start, Vector3 end, float t)
     {
-        // 두 점의 중간 위치
-        Vector3 mid = (start + end) * 0.5f;
+        // 2차 베지어 곡선이 이런 종류의 호에 더 간단하고 좋은 경우가 많습니다.
+        // 호를 만들기 위한 제어점을 정의합니다.
+        float height = Vector3.Distance(start, end) * mainField.putCurve; // 호의 높이를 변경하려면 이 계수를 조정하세요.
+        if (height < 1f) height = 1f; // 최소 높이
 
-        // 높이 차이
-        float heightDiff = end.y - start.y;
+        Vector3 controlPoint = (start + end) * 0.5f + Vector3.up * height;
 
-        // 제어점 두 개 생성
-        // Y축 방향으로 곡선을 만들기 위해 mid를 기준으로 offset 적용
-        Vector3 control1 = mid;
-        Vector3 control2 = mid;
+        // 2차 베지어 공식: (1-t)^2 * p0 + 2(1-t)t * p1 + t^2 * p2
+        float u = 1 - t;
+        float tt = t * t;
+        float uu = u * u;
 
-        // offset 크기 (거리에 비례, 높이 차이에 따라 분배)
-        float distance = Vector3.Distance(start, end);
-        float yOffset = Mathf.Max(distance * 0.25f, 0.1f); // 곡선 강도
+        Vector3 p = uu * start; // (1-t)^2 * p0
+        p += 2 * u * t * controlPoint; // 2(1-t)t * p1
+        p += tt * end; // t^2 * p2
 
-        // 끝점이 더 높을수록 제어점이 끝점 쪽으로 몰리게
-        float bias = Mathf.InverseLerp(-distance, distance, heightDiff);
-
-        control1.y += yOffset * (1f - bias); // 시작점 쪽 제어점
-        control2.y += yOffset * bias;        // 끝점 쪽 제어점
-
-        // 3차 베지어 공식
-        return Mathf.Pow(1 - t, 3) * start +
-               3 * Mathf.Pow(1 - t, 2) * t * control1 +
-               3 * (1 - t) * Mathf.Pow(t, 2) * control2 +
-               Mathf.Pow(t, 3) * end;
+        return p;
     }
 
     public void UpdateCurrentStackableObject()
@@ -128,5 +119,24 @@ public class StackContainer : MonoBehaviour
     public Stack<StackableObject> GetCurrentStack()
     {
         return currentStack;
+    }
+
+    public void DisableAllStackableObjects()
+    {
+        foreach (StackableObject obj in currentStack)
+        {
+            obj.gameObject.SetActive(false);
+        }
+    }
+
+    public void ClearStack()
+    {
+        foreach (StackableObject obj in currentStack)
+        {
+            obj.transform.SetParent(null);
+            obj.gameObject.SetActive(false);
+        }
+        
+        currentStack.Clear();
     }
 }

@@ -8,75 +8,99 @@ public class CashDesk : WaitingQueue
     enum PayState
     {
         CustomerWaiting,
-        PaymentInProgress,
+        PaymentStart,
+        BreadInserting,
         PaymentCompleted,
         
     }
     
+    private const float arriveDistance = 0.5f;
+    private const float rightAngle = 90f;
+    
     private StackContainer showBasketContainer;
-    private WaitingSlot usingSlot;
+    private CustomerController usingCustomer;
     
     [SerializeField] private GameObject paperBagPrefab;
     [SerializeField] private ContacktZone contacktZone;
     [SerializeField] private AutoGrid customerLine;
     
     [Header("위치")]
-    [SerializeField] private Transform customerOutPoint;
+    public Transform customerOutPoint;
     [SerializeField] private Transform paperBagPoint;
+    [SerializeField] private StackContainer paperBagContainer;
     
 
     private bool isPaymentAvailable = false;
-    private bool isGetNextCustomer = true;
+    private bool isStartBreadInsert = false;
     
     private PayState currentPayState = PayState.CustomerWaiting;
     private PaperBag currentPaperBag;
+    
+    public event Action PaymentCompletedEvent;
 
     protected override void Start()
     {
         base.Start();
-        usingSlot = null;
+        usingCustomer = null;
         poolManager.SetPoolQueue(paperBagPrefab);
     }
     
     protected void Update()
     {
-        if (usingSlot != null)
+        if (usingCustomer != null)
         {
-            if (usingSlot.Customer.CheckGetPaperBag())
+            //Debug.Log("usigSlot 널 아님!");
+            if (isPaymentAvailable && usingCustomer.CurrentState.GetType() == typeof(WaitPayState) &&
+                Vector3.Distance(usingCustomer.transform.position, customerLine.transform.position) <
+                arriveDistance)
             {
-                usingSlot.Customer = null;
-                usingSlot = null;
+                switch (currentPayState)
+                {
+                    case PayState.CustomerWaiting:
+                        usingCustomer.stackCarrier.IsFinishGiveEvent += StartPacking;
+                        usingCustomer.stackCarrier.IsFinishGetEvent += DonePayment;
+                        GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position,
+                            paperBagPoint.rotation);
+                        tempPaperBag.transform.TryGetComponent(out currentPaperBag);
+                        tempPaperBag.transform.TryGetComponent(out StackableObject stackableObject);
+                        paperBagContainer.GetStackObject(stackableObject);
+                        currentPayState = PayState.PaymentStart;
+                        break;
+                    case PayState.PaymentStart:
+                        usingCustomer.stackCarrier.GiveObject(currentPaperBag.transform.position,
+                            currentPaperBag.stackContainer, SetOff);
+                        currentPayState = PayState.BreadInserting;
+                        break;
+                    case PayState.BreadInserting:
+                        if (currentPaperBag.GetisGetAllBread())
+                        {
+                            currentPaperBag.stackContainer.DisableAllStackableObjects();
+                            usingCustomer.stackCarrier.GetObject(usingCustomer.stackCarrier.stackPoint.position, paperBagContainer);
+                        }
+                        break;
+                    case PayState.PaymentCompleted:
+                        usingCustomer.SetIsGetPaperBag(true);
+                        usingCustomer.stackCarrier.IsFinishGiveEvent -= StartPacking;
+                        usingCustomer.stackCarrier.IsFinishGetEvent -= DonePayment;
+                        GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
+                        usingCustomer = null;
+                        break;
+                }
             }
             else
             {
-                if (isPaymentAvailable)
-                {
-                    switch (currentPayState)
-                    {
-                        case PayState.CustomerWaiting:
-                            GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position, paperBagPoint.rotation);
-                            tempPaperBag.transform.TryGetComponent(out currentPaperBag);
-                            currentPayState = PayState.PaymentInProgress;
-                            break;
-                        case PayState.PaymentInProgress:
-                            
-                            break;
-                        case PayState.PaymentCompleted:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-                else
                 return;
-            }
+            } 
+                
         }
         else //슬롯이 Null이면 슬롯을 뽑음
         {
+            //Debug.Log("usigSlot 널!");
             if (Count == 0) return;
             
-            usingSlot = Dequeue();
-            usingSlot.Customer.transform.TryGetComponent(out StackCarrier customerStack);
+            usingCustomer = Dequeue();
+
+            if (currentPayState == PayState.PaymentCompleted) UpdateQueuePoint();
         }
     }
 
@@ -90,23 +114,74 @@ public class CashDesk : WaitingQueue
             waitPoint.transform.SetParent(customerLine.transform);
             customerLine.UpdateElements();
             
-            WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint);
-            tempWaitingSlot.Customer = customerController;
+            WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint, customerController);
             waitingSlots.Add(tempWaitingSlot);
-            waitQueue.Enqueue(tempWaitingSlot);
+            //waitQueue.Enqueue(tempWaitingSlot);
+            waitQueue.Enqueue(customerController);
             return tempWaitingSlot;
         }
         else
         {
             waitingSlot.Customer = customerController;
-            waitQueue.Enqueue(waitingSlot);
+            waitQueue.Enqueue(customerController);
             return waitingSlot;
         }
+    }
+
+    public void UpdateQueuePoint()
+    {
+        for (int i = 1; i < waitingSlots.Count; i++)
+        {
+            waitingSlots[i - 1].Customer = waitingSlots[i].Customer;
+        }
+
+        waitingSlots[^1].Customer = null;
+        currentPayState = PayState.CustomerWaiting;
+        PaymentCompletedEvent?.Invoke();
     }
 
     public void SetPaymentAvailable(bool available)
     {
         isPaymentAvailable = available;
     }
+
+    public List<Transform> GetFirstWaitPoint()
+    {
+        return customerLine.GetElements();
+    }
+
+    private void StartPacking(EStackableObjects type)
+    {
+        usingCustomer.stackCarrier.autoGrid.objRotation.y += rightAngle;
+        PaperBagClose();
+    }
+
+    private void PaperBagClose()
+    {
+        currentPaperBag.SetClose();
+    }
+
+    private void DonePayment(EStackableObjects type)
+    {
+        if (type == EStackableObjects.PaperBag)
+        {
+            currentPayState = PayState.PaymentCompleted;
+        }
+    }
+
+    private void SetOff(StackableObject Bread)
+    {
+        Bread.gameObject.SetActive(false);
+    }
+
+    public void SetWaitingState()
+    {
+
+        if (currentPayState == PayState.PaymentCompleted)
+        {
+            currentPayState = PayState.CustomerWaiting;
+        }
+    }
+    
     
 }

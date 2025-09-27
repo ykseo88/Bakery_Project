@@ -12,13 +12,19 @@ public class StackCarrier : StackContainer
     public bool allowOutPut = true;
     
     private bool isaleadyMoveable = false;
+
+    private bool isContackted = false;
+    
+    public event Action<EStackableObjects> IsFinishGetEvent;
+    public event Action<EStackableObjects> IsFinishGiveEvent;
     
     // Start is called before the first frame update
 
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag(INTERRACTIONZONE_TAG))
-        { 
+        {
+            isContackted = true;
             //Debug.Log($"{other.gameObject.name}과 상호작용");
             other.transform.TryGetComponent(out StackContainer stackContainer);
             
@@ -63,7 +69,6 @@ public class StackCarrier : StackContainer
             
             if (isOutputAble && allowOutPut && isaleadyMoveable == false && stackContainer.stackMovealbe)
             {
-                
                 StartCoroutine(GetStart(stackPoint.position, stackContainer));
             }
             else
@@ -73,7 +78,12 @@ public class StackCarrier : StackContainer
         }
     }
 
-    private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer)
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(INTERRACTIONZONE_TAG)) isContackted = false;
+    }
+
+    private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
     {
         stackContainer.stackMovealbe = false;
         isaleadyMoveable = true;
@@ -83,14 +93,15 @@ public class StackCarrier : StackContainer
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this, processAfterArrive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
         isaleadyMoveable = false;
         stackContainer.stackMovealbe = true;
+        IsFinishGiveEvent?.Invoke(currentStackObject);
     }
 
-    private IEnumerator GetStart(Vector3 end, StackContainer stackContainer)
+    private IEnumerator GetStart(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
     {
         stackContainer.stackMovealbe = false;
         isaleadyMoveable = true;
@@ -100,20 +111,21 @@ public class StackCarrier : StackContainer
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer, processAfterArrive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
         isaleadyMoveable = false;
         stackContainer.stackMovealbe = true;
+        IsFinishGetEvent?.Invoke(currentStackObject);
     }
 
-    public void GetObject(Vector3 end, StackContainer stackContainer)
+    public void GetObject(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
     {
-        StartCoroutine(GetStart(end, stackContainer));
+        StartCoroutine(GetStart(end, stackContainer, processAfterArrive));
     }
     
-    public void GiveObject(Vector3 end, StackContainer stackContainer)
+    public void GiveObject(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
     {
-        StartCoroutine(GiveStart(end, stackContainer));
+        StartCoroutine(GiveStart(end, stackContainer, processAfterArrive));
     }
 }

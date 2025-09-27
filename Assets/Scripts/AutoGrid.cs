@@ -49,10 +49,8 @@ public class AutoGrid : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            Debug.Log(child.name);
             if (!elements.Contains(child))
             {
-                Debug.Log(child.name + "새로 추가");
                 elements.Add(child);
             }
         }
@@ -264,6 +262,11 @@ public class AutoGrid : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public List<Transform> GetElements()
+    {
+        return elements;
     }
 
 }

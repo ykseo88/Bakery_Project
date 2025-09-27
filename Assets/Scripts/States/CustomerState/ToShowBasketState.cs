@@ -11,8 +11,8 @@ public class ToShowBasketState : ICustomerState
     { toStopOverPoint, toWaitPoint }
     
     private static readonly int WALK = Animator.StringToHash("Walk");
-    private const float arriveDistance = 0.5f;
-    private const float rotateDuration = 0.5f;
+    private const float rotateDuration = 0.1f;
+
     
     private CustomerController customerController;
     public ToShowBasketState(CustomerController customerController) => this.customerController = customerController;
@@ -25,6 +25,7 @@ public class ToShowBasketState : ICustomerState
     private Vector3 wayPoint;
     private Vector3 stopOverPoint;
     private float Distance;
+    private ShowBasket showBasket;
     
     private Sequance currentSeauance = Sequance.toStopOverPoint;
     
@@ -32,11 +33,14 @@ public class ToShowBasketState : ICustomerState
     
     public void Enter()
     {
+        customerController.SetDebugCurrentState(ECustomerStates.ToShowBasketState);
         customerController.transform.TryGetComponent(out stacable);
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
         animator.SetTrigger(WALK);
-        WaitingSlot waitingSlot = customerController.CustomerManager.showBasket.Enqueue(customerController);
+        showBasket = customerController.CustomerManager.showBasket;
+        showBasket.Enqueue(customerController);
+        WaitingSlot waitingSlot = showBasket.GetWaitingSlotOrNullByCustomer(customerController);
         waitPosition = waitingSlot.waitPoint.transform.position;
         waitRotation = waitingSlot.waitPoint.transform.rotation;
         stopOverPoint = customerController.CustomerManager.centerPoint.position;
@@ -47,15 +51,14 @@ public class ToShowBasketState : ICustomerState
 
     public void Update()
     {
-        Distance = Vector3.Distance(customerController.transform.position, wayPoint);
-        CheckArrivePoint(Distance);
+        customerController.transform.DOLookAt(customerController.transform.position + agent.velocity.normalized, rotateDuration, AxisConstraint.Y);
+        CheckArrivePoint();
     }
 
     public void Exit()
     {
         animator.ResetTrigger(WALK);
-        agent.updateRotation = false;
-        customerController.transform.DOLookAt(customerController.CustomerManager.showBasket.transform.position, rotateDuration, AxisConstraint.Y);
+        
     }
 
     private void ResetDestination()
@@ -63,9 +66,9 @@ public class ToShowBasketState : ICustomerState
         agent.SetDestination(wayPoint);
     }
 
-    private void CheckArrivePoint(float distance)
+    private void CheckArrivePoint()
     {
-        if (distance <= arriveDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance)
         {
             switch (currentSeauance)
             {

@@ -3551,7 +3551,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1484128278}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.18, y: 0.5, z: 14.06}
+  m_LocalPosition: {x: 2.95, y: 0.87, z: 16.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3669,7 +3669,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1544583400}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.82, y: 0, z: -9.54}
+  m_LocalPosition: {x: -1.68, y: 0, z: -12.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4673,6 +4673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2060821785}
+  - component: {fileID: 2060821786}
   m_Layer: 0
   m_Name: PaperBagSpawnPoint
   m_TagString: Untagged
@@ -4687,7 +4688,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2060821784}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
   m_LocalPosition: {x: -0.937, y: 0.907, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4695,6 +4696,28 @@ Transform:
   m_Father: {fileID: 2945468208367403239}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2060821786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060821784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28086d0397a02a4a821cd2699c7eb47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  putTime: 0.2
+  putTerm: 0.1
+  maxStackNum: 10
+  stackPoint: {fileID: 0}
+  autoGrid: {fileID: 0}
+  isHasStack: 0
+  stackType: 0
+  currentStackObject: 0
+  currentStackNum: 0
+  stackMovealbe: 1
 --- !u!1 &2062123201
 GameObject:
   m_ObjectHideFlags: 0
@@ -5425,8 +5448,7 @@ MonoBehaviour:
   customerLine: {fileID: 2020416139}
   customerOutPoint: {fileID: 392499373}
   paperBagPoint: {fileID: 2060821785}
-  DebugQueueCount: 0
-  IsNullUsingSlot: 0
+  paperBagContainer: {fileID: 2060821786}
 --- !u!114 &4083440390696205195
 MonoBehaviour:
   m_ObjectHideFlags: 0

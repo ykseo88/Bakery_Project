@@ -45,6 +45,7 @@ public class SAOMainField : ScriptableObject
 
     public float putTime = 0.2f;
     public float putTerm = 1f;
+    public float putCurve = 1f;
 
     public bool CheackInputAble(StackContainer requestor, StackContainer host, EStackableObjects requestorObj)
     {

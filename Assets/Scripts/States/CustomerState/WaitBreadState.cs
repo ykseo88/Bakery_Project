@@ -9,6 +9,8 @@ public class WaitBreadState : ICustomerState
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
     private const string BREAD = "Bread";
+    private const float rotateDuration = 0.5f;
+    
     private CustomerController customerController;
     public WaitBreadState(CustomerController customerController) => this.customerController = customerController;
     
@@ -20,6 +22,7 @@ public class WaitBreadState : ICustomerState
     
     public void Enter()
     {
+        customerController.SetDebugCurrentState(ECustomerStates.WaitBreadState);
         customerController.transform.TryGetComponent(out stacable);
         customerController.transform.TryGetComponent(out agent);
         customerController.transform.TryGetComponent(out animator);
@@ -28,13 +31,15 @@ public class WaitBreadState : ICustomerState
         customerController.markWithNumber.enabled = true;
         customerController.numberText.enabled = true;
         customerController.markWithNumber.sprite = customerController.mainField.GetSpriteByName(BREAD);
+        customerController.SetIsArrivedQueuePoint(true);
     }
 
     public void Update()
     {
-        customerController.numberText.SetText((customerController.wantBreadNum - customerController.stackContainer.currentStackNum).ToString());
+        customerController.numberText.SetText((customerController.wantBreadNum - customerController.stackCarrier.currentStackNum).ToString());
         if(stacable.isHasStack) animator.SetTrigger(STACK_IDLE);
         if(customerController.CheckFullGetBread()) customerController.ChangeState(new ToCashDeskState(customerController));
+        customerController.transform.DOLookAt(customerController.CustomerManager.showBasket.transform.position, rotateDuration, AxisConstraint.Y);
     }
 
     public void Exit()

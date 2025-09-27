@@ -12,9 +12,10 @@ public class WaitingSlot
     
     public bool IsEmpty => Customer == null;
 
-    public WaitingSlot(WaitngPoint waitPoint)
+    public WaitingSlot(WaitngPoint waitPoint, CustomerController customer)
     {
         this.waitPoint = waitPoint;
+        this.Customer = customer;
     }
 }
 
@@ -22,7 +23,7 @@ public class WaitingQueue : MonoBehaviour
 {
     public List<WaitingSlot> waitingSlots = new List<WaitingSlot>();
     public int maxWaitingSlotNum = 3;
-    protected Queue<WaitingSlot> waitQueue = new Queue<WaitingSlot>();
+    protected Queue<CustomerController> waitQueue = new Queue<CustomerController>();
     [SerializeField] protected GameObject waitPointPrefab;
     [SerializeField] protected PoolManager poolManager;
     
@@ -32,6 +33,7 @@ public class WaitingQueue : MonoBehaviour
     protected virtual void Start()
     {
         poolManager.SetPoolQueue(waitPointPrefab);
+        waitQueue.Clear();
     }
 
     protected WaitingSlot GetEmptyWaitingSlot()
@@ -46,24 +48,30 @@ public class WaitingQueue : MonoBehaviour
     public virtual WaitingSlot Enqueue(CustomerController customerController)
     {
         var waitingSlot = GetEmptyWaitingSlot();
-        if (waitingSlot == null && waitingSlots.Count < maxWaitingSlotNum)
+        if (waitingSlot == null)
         {
-            poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
-            waitPoint.transform.SetParent(transform);
-            WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint);
-            waitingSlots.Add(tempWaitingSlot);
-            waitQueue.Enqueue(tempWaitingSlot);
-            return tempWaitingSlot;
+            if (waitingSlots.Count < maxWaitingSlotNum)
+            {
+                poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
+                waitPoint.transform.SetParent(transform);
+                WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint, customerController);
+                waitingSlots.Add(tempWaitingSlot);
+                //waitQueue.Enqueue(tempWaitingSlot);
+                waitQueue.Enqueue(customerController);
+                return tempWaitingSlot;
+            }
+
+            return null;
         }
         else
         {
             waitingSlot.Customer = customerController;
-            waitQueue.Enqueue(waitingSlot);
+            waitQueue.Enqueue(customerController);
             return waitingSlot;
         }
     }
 
-    public WaitingSlot Dequeue()
+    public CustomerController Dequeue()
     {
         return waitQueue.Dequeue();
     }
@@ -81,6 +89,16 @@ public class WaitingQueue : MonoBehaviour
         }
 
         return false;
+    }
+
+    public WaitingSlot GetWaitingSlotOrNullByCustomer(CustomerController customer)
+    {
+        foreach (WaitingSlot slot in waitingSlots)
+        {
+            if(slot.Customer == customer) return slot;
+        }
+        
+        return null;
     }
     
     

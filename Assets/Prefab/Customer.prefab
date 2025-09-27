@@ -706,7 +706,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 0
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 0.1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -788,8 +788,8 @@ MonoBehaviour:
   markWithNumber: {fileID: 7555260235747790009}
   numberText: {fileID: 989896320802446503}
   wantBreadNum: 0
-  stackContainer: {fileID: 0}
-  centerPoint: {fileID: 0}
+  stackCarrier: {fileID: 0}
+  debugCurrentState: 0
 --- !u!1 &3898563997361661198
 GameObject:
   m_ObjectHideFlags: 0
