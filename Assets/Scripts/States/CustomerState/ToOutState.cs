@@ -60,7 +60,7 @@ public class ToOutState : ICustomerState
                     currentSequance = ESequance.ToWaitPoint;
                     break;
                 case ESequance.ToWaitPoint:
-                    customerController.gameObject.SetActive(false);
+                    PoolManager.instance.DeActiveObject(customerController.gameObject);
                     break;
             }
         }

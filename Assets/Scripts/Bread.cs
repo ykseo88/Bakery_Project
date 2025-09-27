@@ -10,6 +10,12 @@ public class Bread : StackableObject
 
     private Collider col;
     private Rigidbody rb;
+    
+    private void OnEnable()
+    {
+        if (rb != null) rb.isKinematic = true;
+        if (col != null) col.enabled = true;
+    }
 
     protected override void Start()
     {
@@ -38,6 +44,7 @@ public class Bread : StackableObject
 
     private void OnDisable()
     {
+        Debug.Log("빵 꺼짐");
         isfirst = true;
         col.enabled = true;
         rb.isKinematic = false;

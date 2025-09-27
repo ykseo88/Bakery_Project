@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public SAOMainField mainField;
 
+    public int money = 0;
+
     private void Awake()
     {
         Instance = this;

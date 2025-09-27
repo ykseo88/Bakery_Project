@@ -111,6 +111,12 @@ public class AutoGrid : MonoBehaviour
         return 0;
     }
 
+    public void ClearGrid()
+    {
+        elements.Clear();
+        SetGrid();
+    }
+
     public void SetGrid()
     {
         int firstAxis = 0;

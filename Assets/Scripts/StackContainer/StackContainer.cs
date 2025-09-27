@@ -121,11 +121,20 @@ public class StackContainer : MonoBehaviour
         return currentStack;
     }
 
-    public void DisableAllStackableObjects()
+    public void ClearAndDeactivateAll()
     {
-        foreach (StackableObject obj in currentStack)
+        if (autoGrid != null)
         {
-            obj.gameObject.SetActive(false);
+            autoGrid.ClearGrid();
+        }
+
+        while (currentStack.Count > 0)
+        {
+            StackableObject obj = currentStack.Pop();
+            if (obj != null && obj.gameObject != null) // Safety check for destroyed objects
+            {
+                PoolManager.instance.DeActiveObject(obj.gameObject);
+            }
         }
     }
 

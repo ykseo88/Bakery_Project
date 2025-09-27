@@ -74,7 +74,7 @@ public class CashDesk : WaitingQueue
                     case PayState.BreadInserting:
                         if (currentPaperBag.GetisGetAllBread())
                         {
-                            currentPaperBag.stackContainer.DisableAllStackableObjects();
+                            currentPaperBag.stackContainer.ClearAndDeactivateAll();
                             usingCustomer.stackCarrier.GetObject(usingCustomer.stackCarrier.stackPoint.position, paperBagContainer);
                         }
                         break;

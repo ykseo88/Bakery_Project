@@ -23,7 +23,7 @@ public class CustomerController : MonoBehaviour
     
     private const string PLAYER = "Player";
     private const string CUSTOMER = "Customer";
-    private const float rightAngle = 90f;
+    
 
     public int PersonalId { get;  private set; }
     public Animator animator;
@@ -48,6 +48,8 @@ public class CustomerController : MonoBehaviour
     
     private bool isArrivedQueuePoint = false;
     
+    private float orginStackAngle;
+    
     [SerializeField] private ECustomerStates debugCurrentState;
     
     public event Action OnImpactEvent;
@@ -59,6 +61,7 @@ public class CustomerController : MonoBehaviour
         
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
         stackCarrier.maxStackNum = wantBreadNum;
+        orginStackAngle = stackCarrier.autoGrid.objRotation.y;
     }
 
     private void OnEnable()
@@ -137,7 +140,7 @@ public class CustomerController : MonoBehaviour
         stackCarrier.ClearStack();
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
         stackCarrier.maxStackNum = wantBreadNum;
-        stackCarrier.autoGrid.objRotation.y -= rightAngle;
+        stackCarrier.autoGrid.objRotation.y = orginStackAngle;
         isHasPaperBag = false; 
         isArrivedQueuePoint = false;
     }
