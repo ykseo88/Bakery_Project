@@ -25,55 +25,41 @@ public class StackCarrier : StackContainer
         if (other.CompareTag(INTERRACTIONZONE_TAG))
         {
             isContackted = true;
-            //Debug.Log($"{other.gameObject.name}과 상호작용");
+            Debug.Log($"{other.gameObject.name}과 상호작용");
             other.transform.TryGetComponent(out StackContainer stackContainer);
             
-            //둘 다 물건을 들고 있는데 양쪽 물건이 다른지 확인
-            if ((stackContainer.currentStackObject != EStackableObjects.None
-                 && currentStackObject != EStackableObjects.None)
-                && currentStackObject != stackContainer.currentStackObject)
-            {
-                //Debug.LogError($"양측 물건이 다름!");
-                return;
-            }
-            
             //둘 다 빈손인지 확인
-            if (stackContainer.currentStackObject == EStackableObjects.None
-                && currentStackObject == EStackableObjects.None)
+            if (stackContainer.currentStackObjectType == EStackableObjects.None
+                && currentStackObjectType == EStackableObjects.None)
             {
-                //Debug.LogError($"양측 빈손임!");
+                //Debug.LogError($"{gameObject.name}양측 빈손임!");
                 return;
             }
-            
-            //양쪽 다 꽉 찼는지 확인
-            if (stackContainer.GetIsFullStack() && GetIsFullStack())
-            {
-                //Debug.LogError($"양측 꽉참!");
-                return;
-            }   
             
             //운반자가 이 창고에 들고있는 물건을 넣을 수 있는지 확인
-            bool isInputAble = mainField.CheackInputAble(this, stackContainer, currentStackObject);
+            bool isInputAble = mainField.CheackInputAble(this, stackContainer, currentStackObjectType) 
+                               && CheckMoveable(stackContainer, true);
             //운반자가 창고에서 물건을 꺼낼 수 있는지 확인
-            bool isOutputAble = mainField.CheackOutputAble(this, stackContainer, stackContainer.currentStackObject);
+            bool isOutputAble = mainField.CheackOutputAble(this, stackContainer, stackContainer.currentStackObjectType)  
+                                && CheckMoveable(stackContainer, false);
 
             if (isInputAble && allowInput && isaleadyMoveable == false && stackContainer.stackMovealbe)
             {
                 
-                StartCoroutine(GiveStart(stackContainer.stackPoint.position, stackContainer));
+                GiveObject(stackContainer.stackPoint.position, stackContainer, CheckCurrentStackableObjectIsNone());
             }
             else
             {
-                //Debug.Log($"못 넣음!");
+                Debug.Log($"{gameObject.name}못 넣음!");
             }
             
             if (isOutputAble && allowOutPut && isaleadyMoveable == false && stackContainer.stackMovealbe)
             {
-                StartCoroutine(GetStart(stackPoint.position, stackContainer));
+                GetObject(stackPoint.position, stackContainer, stackContainer.CheckCurrentStackableObjectIsNone());
             }
             else
             {
-                //Debug.Log($"못 꺼냄!");
+                Debug.Log($"{gameObject.name}못 꺼냄!");
             }
         }
     }
@@ -83,7 +69,7 @@ public class StackCarrier : StackContainer
         if (other.CompareTag(INTERRACTIONZONE_TAG)) isContackted = false;
     }
 
-    private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
+    private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer, bool isDeActive)
     {
         stackContainer.stackMovealbe = false;
         isaleadyMoveable = true;
@@ -93,15 +79,15 @@ public class StackCarrier : StackContainer
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this, processAfterArrive);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this, isDeActive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
         isaleadyMoveable = false;
         stackContainer.stackMovealbe = true;
-        IsFinishGiveEvent?.Invoke(currentStackObject);
+        IsFinishGiveEvent?.Invoke(currentStackObjectType);
     }
 
-    private IEnumerator GetStart(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
+    private IEnumerator GetStart(Vector3 end, StackContainer stackContainer, bool isDeActive)
     {
         stackContainer.stackMovealbe = false;
         isaleadyMoveable = true;
@@ -111,21 +97,62 @@ public class StackCarrier : StackContainer
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer, processAfterArrive);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer, isDeActive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
         isaleadyMoveable = false;
         stackContainer.stackMovealbe = true;
-        IsFinishGetEvent?.Invoke(currentStackObject);
+        IsFinishGetEvent?.Invoke(currentStackObjectType);
     }
 
-    public void GetObject(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
+    public void GetObject(Vector3 end, StackContainer stackContainer, bool isDeActive = false)
     {
-        StartCoroutine(GetStart(end, stackContainer, processAfterArrive));
+        StartCoroutine(GetStart(end, stackContainer, isDeActive));
     }
     
-    public void GiveObject(Vector3 end, StackContainer stackContainer, Action<StackableObject> processAfterArrive = null)
+    public void GiveObject(Vector3 end, StackContainer stackContainer, bool isDeActive = false)
     {
-        StartCoroutine(GiveStart(end, stackContainer, processAfterArrive));
+        StartCoroutine(GiveStart(end, stackContainer, isDeActive));
+    }
+
+    private bool CheckMoveable(StackContainer stackContainer, bool isInput)
+    {
+        if (isInput)
+        {
+            if (currentStackObject.isNoneStack == false)
+            {
+                return CheckNotMissMatch(stackContainer);
+            }
+        }
+        else
+        {
+            if (stackContainer.currentStackObject.isNoneStack == false)
+            {
+                return CheckNotMissMatch(stackContainer);
+            }
+        }
+
+        return true;
+    }
+
+    private bool CheckNotMissMatch(StackContainer stackContainer)
+    {
+        //둘 다 물건을 들고 있는데 양쪽 물건이 다른지 확인
+        if ((stackContainer.currentStackObjectType != EStackableObjects.None
+             && currentStackObjectType != EStackableObjects.None)
+            && currentStackObjectType != stackContainer.currentStackObjectType)
+        {
+            Debug.LogError($"{gameObject.name}양측 물건이 다름!");
+            return false;
+        }
+            
+        //양쪽 다 꽉 찼는지 확인
+        if (stackContainer.GetIsFullStack() && GetIsFullStack())
+        {
+            //Debug.LogError($"{gameObject.name}양측 꽉참!");
+            return false;
+        }
+
+        return true;
     }
 }

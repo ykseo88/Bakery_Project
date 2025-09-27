@@ -23,6 +23,7 @@ public class CashDesk : WaitingQueue
     [SerializeField] private GameObject paperBagPrefab;
     [SerializeField] private ContacktZone contacktZone;
     [SerializeField] private AutoGrid customerLine;
+    [SerializeField] private MoneyCollector moneyCollector;
     
     [Header("위치")]
     public Transform customerOutPoint;
@@ -35,6 +36,8 @@ public class CashDesk : WaitingQueue
     
     private PayState currentPayState = PayState.CustomerWaiting;
     private PaperBag currentPaperBag;
+
+    private int payMoney = 0;
     
     public event Action PaymentCompletedEvent;
 
@@ -67,8 +70,9 @@ public class CashDesk : WaitingQueue
                         currentPayState = PayState.PaymentStart;
                         break;
                     case PayState.PaymentStart:
+                        payMoney = usingCustomer.stackCarrier.currentStackNum;
                         usingCustomer.stackCarrier.GiveObject(currentPaperBag.transform.position,
-                            currentPaperBag.stackContainer, SetOff);
+                            currentPaperBag.stackContainer, true);
                         currentPayState = PayState.BreadInserting;
                         break;
                     case PayState.BreadInserting:
@@ -80,10 +84,12 @@ public class CashDesk : WaitingQueue
                         break;
                     case PayState.PaymentCompleted:
                         usingCustomer.SetIsGetPaperBag(true);
+                        usingCustomer.stackCarrier.autoGrid.objRotation.y -= rightAngle;
                         usingCustomer.stackCarrier.IsFinishGiveEvent -= StartPacking;
                         usingCustomer.stackCarrier.IsFinishGetEvent -= DonePayment;
                         GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
                         usingCustomer = null;
+                        moneyCollector.GetMoney(payMoney);
                         break;
                 }
             }
@@ -101,6 +107,7 @@ public class CashDesk : WaitingQueue
             usingCustomer = Dequeue();
 
             if (currentPayState == PayState.PaymentCompleted) UpdateQueuePoint();
+            
         }
     }
 
@@ -137,6 +144,7 @@ public class CashDesk : WaitingQueue
 
         waitingSlots[^1].Customer = null;
         currentPayState = PayState.CustomerWaiting;
+        
         PaymentCompletedEvent?.Invoke();
     }
 

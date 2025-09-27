@@ -64,6 +64,7 @@ public class PoolManager : MonoBehaviour
         if (prefabByInstance.TryGetValue(instance, out GameObject originalPrefab))
         {
             instance.SetActive(false);
+            instance.transform.SetParent(transform);
             pool[originalPrefab].Enqueue(instance);
             prefabByInstance.Remove(instance); // Clean up the mapping
         }

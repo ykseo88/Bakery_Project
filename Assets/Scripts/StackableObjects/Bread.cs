@@ -35,11 +35,11 @@ public class Bread : StackableObject
         }
     }
 
-    public override void MoveStackableObject(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer, Action<StackableObject> processAfterArrive = null)
+    public override void MoveStackableObject(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer, bool isDeActive)
     {
         col.enabled = false;
         rb.isKinematic = true;
-        base.MoveStackableObject(start, end, toStackContainer, fromStackContainer);
+        base.MoveStackableObject(start, end, toStackContainer, fromStackContainer, isDeActive);
     }
 
     private void OnDisable()

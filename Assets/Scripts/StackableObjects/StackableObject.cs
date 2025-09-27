@@ -16,7 +16,8 @@ public class StackableObject : MonoBehaviour
     public EStackableObjects type;
     [SerializeField] private SAOMainField mainField;
     public AutoGrid autoGrid;
-    public Action<StackableObject> processStackableObjectAfterArriveAction;
+
+    public bool isNoneStack = false;
 
     protected virtual void Start()
     {
@@ -28,7 +29,7 @@ public class StackableObject : MonoBehaviour
         if(transform.parent != null) transform.parent.TryGetComponent(out autoGrid);
     }
     
-    protected IEnumerator MoveCoroutine(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer)
+    protected IEnumerator MoveCoroutine(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer, bool isDeActive)
     {
         float currentTime = 0f;
         Quaternion originRot =  transform.rotation;
@@ -41,26 +42,23 @@ public class StackableObject : MonoBehaviour
             yield return null;
         }
         
-        toStackContainer.currentStackObject = type;
+        
         //Debug.Log($"받는 곳: {toStackContainer.gameObject.name}, 물건 종류: {type}, 현재 받는 곳 타입: {toStackContainer.currentStackObject}");
-        toStackContainer.GetStackObject(this);
-        processStackableObjectAfterArriveAction?.Invoke(this);
+        if (isDeActive)
+        {
+            PoolManager.instance.DeActiveObject(this.gameObject);
+        }
+        else
+        {
+            toStackContainer.currentStackObjectType = type;
+            toStackContainer.GetStackObject(this);
+        }
+        
         //Debug.Log($"{this}가 {fromStackContainer}에서 {toStackContainer}로 이동됨. 현재 {toStackContainer}의 스택 수는 {toStackContainer.GetCurrentStack().Count}개!");
     }
 
-    public virtual void MoveStackableObject(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer, Action<StackableObject> processAfterArrive = null)
+    public virtual void MoveStackableObject(Vector3 start, Vector3 end, StackContainer toStackContainer, StackContainer fromStackContainer, bool isDeActive)
     {
-        processStackableObjectAfterArriveAction = processAfterArrive;
-        StartCoroutine(MoveCoroutine(start, end, toStackContainer, fromStackContainer));
-    }
-
-    public void ReSetStackableObject()
-    {
-        
-    }
-
-    protected void OnDisable()
-    {
-        processStackableObjectAfterArriveAction = null;
+        StartCoroutine(MoveCoroutine(start, end, toStackContainer, fromStackContainer, isDeActive));
     }
 }

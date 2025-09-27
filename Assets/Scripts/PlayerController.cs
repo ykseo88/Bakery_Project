@@ -13,10 +13,12 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveValue;
     private Vector2 rotateValue;
     private IPlayerState currentState;
+    private StackCarrier stackCarrier;
 
     private void Start()
     {
         ChangeState(new PlayerIdleState(this));
+        transform.TryGetComponent(out stackCarrier);
     }
     
     private void Update()
@@ -56,5 +58,10 @@ public class PlayerController : MonoBehaviour
     public Vector2 GetMoveValue()
     {
         return moveValue;
+    }
+
+    public StackCarrier GetStackContainer()
+    {
+        return stackCarrier;
     }
 }

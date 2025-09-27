@@ -61,7 +61,6 @@ public class CustomerController : MonoBehaviour
         
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
         stackCarrier.maxStackNum = wantBreadNum;
-        orginStackAngle = stackCarrier.autoGrid.objRotation.y;
     }
 
     private void OnEnable()
@@ -140,7 +139,7 @@ public class CustomerController : MonoBehaviour
         stackCarrier.ClearStack();
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
         stackCarrier.maxStackNum = wantBreadNum;
-        stackCarrier.autoGrid.objRotation.y = orginStackAngle;
+        //stackCarrier.autoGrid.objRotation.y = orginStackAngle;
         isHasPaperBag = false; 
         isArrivedQueuePoint = false;
     }

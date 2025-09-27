@@ -31,7 +31,8 @@ public class StackContainer : MonoBehaviour
     public bool isHasStack;
     public EStackableType stackType;
     //public List<EStackableObjects> stackObjects = new List<EStackableObjects>();
-    public EStackableObjects currentStackObject = EStackableObjects.None;
+    public EStackableObjects currentStackObjectType = EStackableObjects.None;
+    public StackableObject currentStackObject;
     
     public int currentStackNum = 0;
     
@@ -78,12 +79,12 @@ public class StackContainer : MonoBehaviour
     {
         if (currentStack.Count > 0)
         {
-            currentStackObject = currentStack.Peek().type;
+            currentStackObjectType = currentStack.Peek().type;
             isHasStack = true;
         }
         else
         {
-            currentStackObject = EStackableObjects.None;
+            currentStackObjectType = EStackableObjects.None;
             isHasStack = false;
         }
     }
@@ -103,6 +104,7 @@ public class StackContainer : MonoBehaviour
         currentStack.Push(stackableObject);
         if(stackPoint !=null){stackableObject.transform.SetParent(stackPoint.transform);}
         stackableObject.CheckParentGrid();
+        currentStackObject = stackableObject;
         
         if (stackableObject.transform.parent != null)
         {
@@ -113,7 +115,9 @@ public class StackContainer : MonoBehaviour
 
     public StackableObject GiveStackObject()
     {
-        return currentStack.Pop();
+        StackableObject temp = currentStack.Pop();
+        if (currentStackNum <= 0) currentStackObject = null;
+        return temp;
     }
 
     public Stack<StackableObject> GetCurrentStack()
@@ -137,6 +141,20 @@ public class StackContainer : MonoBehaviour
             }
         }
     }
+    
+    public void ClearAndDeactivateOne()
+    {
+        if (autoGrid != null)
+        {
+            autoGrid.ClearGrid();
+        }
+
+        StackableObject obj = currentStack.Pop();
+        if (obj != null && obj.gameObject != null) // Safety check for destroyed objects
+        {
+            PoolManager.instance.DeActiveObject(obj.gameObject);
+        }
+    }
 
     public void ClearStack()
     {
@@ -147,5 +165,11 @@ public class StackContainer : MonoBehaviour
         }
         
         currentStack.Clear();
+    }
+
+    public bool CheckCurrentStackableObjectIsNone()
+    {
+        if(currentStackObject == null) return false;
+        return currentStackObject.isNoneStack;
     }
 }

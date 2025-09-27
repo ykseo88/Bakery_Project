@@ -303,7 +303,8 @@ MonoBehaviour:
   autoGrid: {fileID: 0}
   isHasStack: 0
   stackType: 5
-  currentStackObject: 0
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
   currentStackNum: 0
   stackMovealbe: 1
 --- !u!65 &55449886
@@ -1604,7 +1605,8 @@ MonoBehaviour:
   autoGrid: {fileID: 0}
   isHasStack: 0
   stackType: 2
-  currentStackObject: 0
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
   currentStackNum: 0
   stackMovealbe: 1
 --- !u!65 &784585507
@@ -2061,6 +2063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainField: {fileID: 11400000, guid: e4da57bb09a78454ea828210b10e6a0d, type: 2}
+  money: 0
 --- !u!4 &1057351796
 Transform:
   m_ObjectHideFlags: 0
@@ -3560,6 +3563,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1491123002 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 427863432, guid: d4ec1c8155a15e84da3bd88eb9432d07, type: 3}
+  m_PrefabInstance: {fileID: 427863425}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e284f578ab6ff4946bbab9a55bfe9595, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1494849745
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4491,6 +4505,114 @@ MonoBehaviour:
   lastStartAxis: 2
   nextEmptyWorldPosition: {x: 0, y: 0, z: 0}
   nextEmptyLocalPosition: {x: 0, y: 0, z: 0}
+--- !u!1 &2023350752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2023350753}
+  - component: {fileID: 2023350755}
+  - component: {fileID: 2023350754}
+  - component: {fileID: 2023350756}
+  - component: {fileID: 2023350757}
+  m_Layer: 0
+  m_Name: MoneyCollector
+  m_TagString: InteractionZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2023350753
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023350752}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -2.623, y: 0, z: 0.42199996}
+  m_LocalScale: {x: 1.1705711, y: 1, z: 0.4950809}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2945468208367403239}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &2023350754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023350752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a8575941cc634842b3a78cf9b320fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MoneyPrefab: {fileID: 6861023021501816029, guid: 6c1f9e1be97233f478647a96f39c86fb, type: 3}
+  currentMoney: 0
+  stackCarrier: {fileID: 1491123002}
+--- !u!114 &2023350755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023350752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 072670404266d94429ec3ce64e232232, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxCount: {x: 3, y: 100, z: 3}
+  spacing: {x: 0.6, y: 0.15, z: 1.05}
+  objRotation: {x: 0, y: 0, z: 0}
+  currentCount: {x: 0, y: 0, z: 0}
+  elements: []
+  firstStartAxis: 2
+  secondStartAxis: 0
+  lastStartAxis: 1
+  nextEmptyWorldPosition: {x: 0, y: 0, z: 0}
+  nextEmptyLocalPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &2023350756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023350752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28086d0397a02a4a821cd2699c7eb47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  putTime: 0.2
+  putTerm: 0.1
+  maxStackNum: 10
+  stackPoint: {fileID: 2023350753}
+  autoGrid: {fileID: 2023350755}
+  isHasStack: 0
+  stackType: 3
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
+  currentStackNum: 0
+  stackMovealbe: 1
+--- !u!65 &2023350757
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023350752}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.7741905, y: 1, z: 3.0878854}
+  m_Center: {x: 0.60200536, y: 0, z: 1.0439428}
 --- !u!1 &2034018730
 GameObject:
   m_ObjectHideFlags: 0
@@ -4715,7 +4837,8 @@ MonoBehaviour:
   autoGrid: {fileID: 0}
   isHasStack: 0
   stackType: 0
-  currentStackObject: 0
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
   currentStackNum: 0
   stackMovealbe: 1
 --- !u!1 &2062123201
@@ -5134,6 +5257,7 @@ Transform:
   - {fileID: 2020416138}
   - {fileID: 1438122300}
   - {fileID: 2060821785}
+  - {fileID: 2023350753}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5446,6 +5570,7 @@ MonoBehaviour:
   paperBagPrefab: {fileID: 1475244874789685451, guid: 51176b17d84ddea45bbb1c2e26678161, type: 3}
   contacktZone: {fileID: 1659479210}
   customerLine: {fileID: 2020416139}
+  moneyCollector: {fileID: 2023350754}
   customerOutPoint: {fileID: 392499373}
   paperBagPoint: {fileID: 2060821785}
   paperBagContainer: {fileID: 2060821786}
@@ -5468,7 +5593,8 @@ MonoBehaviour:
   autoGrid: {fileID: 0}
   isHasStack: 0
   stackType: 0
-  currentStackObject: 0
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
   currentStackNum: 0
   stackMovealbe: 1
 --- !u!23 &5370361139240778302
