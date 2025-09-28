@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -19,6 +20,8 @@ public class MoneyConsumer : MonoBehaviour
     private int movingMoneyCount = 0;
     
     private bool IsGivenMoney => needMoney > 0 && GameManager.Instance.money > 0;
+    
+    public event Action PayCompleteEvent;
     
     // Start is called before the first frame update
     void Start()
@@ -52,7 +55,9 @@ public class MoneyConsumer : MonoBehaviour
         {
             for(int i = 0; i < rewardObject.Length; i++) rewardObject[i].SetActive(true);
             for(int i = 0; i < offObject.Length; i++) offObject[i].SetActive(false);
+            PayCompleteEvent?.Invoke();
         }
+        
     }
 
     private void SpawnMoneyForPlayer()

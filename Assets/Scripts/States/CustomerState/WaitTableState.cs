@@ -4,66 +4,45 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaitTableStete : IUnitState
+public class WaitTableStete : WaitState
 {
-    private static readonly int IDLE = Animator.StringToHash("Idle");
-    private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
-    private static readonly int STACK_WALK = Animator.StringToHash("StackWalk");
-    private const float rotateDuration = 0.5f;
-    
-    private CustomerController customerController;
+    private const string TABLE = "Table";
     public WaitTableStete(CustomerController customerController) => this.customerController = customerController;
-    
-
-    private Animator animator;
-    private AnimatorStateInfo stateInfo;
-    private StackContainer stacable;
-    private NavMeshAgent agent;
-    private WaitingSlot currentWaitingSlot;
     private EatTable eatTable;
-    private bool isUsable = false;
     
-    public void Enter()
+    public override void Enter()
     {
         customerController.SetDebugCurrentState(ECustomerStates.WaitTableStete);
-        customerController.transform.TryGetComponent(out stacable);
-        customerController.transform.TryGetComponent(out agent);
-        customerController.transform.TryGetComponent(out animator);
-        animator.SetTrigger(STACK_IDLE);
+        
+        base.Enter();
+        
         eatTable = customerController.CustomerManager.eatTable;
-        eatTable.PaymentCompletedEvent += UpdateWaitPoint;
-        currentWaitingSlot = eatTable.GetWaitingSlotOrNullByCustomer(customerController);
-        customerController.transform.DOLookAt(customerController.transform.position + Vector3.back, rotateDuration, AxisConstraint.Y);
-        UpdateWaitPoint();
-        if(eatTable.IsOpen) isUsable = true;
+        
+        customerController.currentCustomerWantMark.sprite = customerController.mainField.GetSpriteByName(TABLE);
+        
+        eatTable.UsingUpdateEvent += UpdateWaitPoint;
     }
 
-    public void Update()
+    public override void Update()
     {
 
-        switch (isUsable)
+        switch (eatTable.IsOpen)
         {
             case true:
-                if (eatTable.UsingCustomer.Equals(customerController))
-                {
-                    customerController.ChangeState(new GetTableState(customerController));
-                }
+                CheckWait(new GetTableState(customerController), Vector3.back,
+                    eatTable.UsingCustomer.Equals(customerController));
                 break;
             case false:
                 // 테이블 안 열렸을 때 처리
+                customerController.transform.DOLookAt(customerController.transform.position + Vector3.back, rotateDuration, AxisConstraint.Y);
+                
                 break;
-        }
-
-        if (agent.remainingDistance <= agent.stoppingDistance)
-        {
-            animator.ResetTrigger(STACK_WALK);
-            animator.SetTrigger(STACK_IDLE);
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
-        eatTable.PaymentCompletedEvent -= UpdateWaitPoint;
+        eatTable.UsingUpdateEvent -= UpdateWaitPoint;
     }
 
     private void UpdateWaitPoint()
@@ -73,4 +52,7 @@ public class WaitTableStete : IUnitState
         animator.ResetTrigger(STACK_IDLE);
         animator.SetTrigger(STACK_WALK);
     }
+    
+    private void StopWaiting()
+    {}
 }

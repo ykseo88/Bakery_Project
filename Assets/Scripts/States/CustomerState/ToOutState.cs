@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class ToOutState : ToState
 {
-    public ToOutState(CustomerController customerController) => this.customerController =  customerController;
+    public ToOutState(CustomerController customerController) => this.customerController = customerController;
     
     private CashDesk cashDesk;
     
@@ -20,7 +20,7 @@ public class ToOutState : ToState
 
     public override void Update()
     {
-        CheckArrivePoint();
+        CheckArrivePoint(new NoneState(customerController));
     }
 
     public override void Exit()

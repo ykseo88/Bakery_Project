@@ -6,12 +6,16 @@ using UnityEngine.AI;
 
 public class ToTableState : ToState
 {
+    
+    
     public ToTableState(CustomerController customerController) => this.customerController = customerController;
     
     private EatTable eatTable;
-    public void Enter()
+    public override void Enter()
     {
         customerController.SetDebugCurrentState(ECustomerStates.ToTableState);
+        
+        base.Enter();
         
         eatTable = customerController.CustomerManager.eatTable;
         
@@ -35,7 +39,7 @@ public class ToTableState : ToState
         CheckArrivePoint(new WaitTableStete(customerController));
     }
 
-    public void Exit()
+    public override void Exit()
     {
         base.Exit();
     }

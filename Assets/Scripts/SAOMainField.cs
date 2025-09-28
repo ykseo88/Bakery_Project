@@ -27,6 +27,7 @@ public class SAOMainField : ScriptableObject
     public int maxWantBreadNum;
     public int minWantBreadNum;
     public float customerSpawnTerm;
+    public float goTableProbability;
     
     [Header("플레이어")]
     public float playerSpeed;

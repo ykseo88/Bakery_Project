@@ -11,6 +11,9 @@ public class Bread : StackableObject
     private Collider col;
     private Rigidbody rb;
     
+    [SerializeField] private int onePerPrice;
+    public int OnePerPrice => onePerPrice;
+    
     private void OnEnable()
     {
         if (rb != null) rb.isKinematic = true;

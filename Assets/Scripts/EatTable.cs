@@ -13,7 +13,6 @@ public class EatTable : WaitingQueue
     public CustomerController UsingCustomer => usingCustomer;
     
     [SerializeField] private GameObject paperBagPrefab;
-    [SerializeField] private ContacktZone contacktZone;
     [SerializeField] private AutoGrid customerLine;
     [SerializeField] private MoneyCollector moneyCollector;
     
@@ -34,13 +33,18 @@ public class EatTable : WaitingQueue
 
     private int payMoney = 0;
     
-    public event Action PaymentCompletedEvent;
+    [SerializeField] MoneyConsumer moneyConsumer;
+    public MoneyConsumer MoneyConsumer => moneyConsumer;
+    
+
 
     protected override void Start()
     {
         base.Start();
         usingCustomer = null;
-        poolManager.SetPoolQueue(paperBagPrefab);
+        //poolManager.SetPoolQueue(paperBagPrefab);
+        isLineQueue = true;
+        moneyConsumer.PayCompleteEvent += PublishOpenEvent;
     }
     
     protected void Update()
@@ -48,14 +52,14 @@ public class EatTable : WaitingQueue
         if (usingCustomer != null)
         {
             //Debug.Log("usigSlot 널 아님!");
-            if (usingCustomer.CurrentState.GetType() == typeof(WaitPayState) &&
+            if (usingCustomer.CurrentState.GetType() == typeof(WaitTableStete) &&
                 Vector3.Distance(usingCustomer.transform.position, customerLine.transform.position) <
                 arriveDistance)
             {
                 switch (currentPayState)
                 {
                     case PayState.CustomerWaiting:
-                        if (usingCustomer.CurrentState.GetType() == typeof(GetTableState))
+                        if (usingCustomer.CurrentState.GetType() == typeof(EatingState))
                         {
                             usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
                             usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
@@ -70,7 +74,7 @@ public class EatTable : WaitingQueue
                         foodSetContainer.GetStackObject(tempfood);
                         
                         payMoney = usingCustomer.StackCarrier.currentStackNum;
-                        usingCustomer.StackCarrier.GiveObject(currentPaperBag.stackContainer, true);
+                        
                         currentPayState = PayState.BreadInserting;
                         break;
                     case PayState.BreadInserting:
@@ -114,7 +118,7 @@ public class EatTable : WaitingQueue
         var waitingSlot = GetEmptyWaitingSlot();
         if (waitingSlot == null && waitingSlots.Count < maxWaitingSlotNum)
         {
-            poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
+            PoolManager.instance.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
             
             waitPoint.transform.SetParent(customerLine.transform);
             customerLine.UpdateElements();
@@ -142,8 +146,6 @@ public class EatTable : WaitingQueue
 
         waitingSlots[^1].Customer = null;
         currentPayState = PayState.CustomerWaiting;
-        
-        PaymentCompletedEvent?.Invoke();
     }
 
     public List<Transform> GetFirstWaitPoint()
@@ -182,5 +184,13 @@ public class EatTable : WaitingQueue
         {
             currentPayState = PayState.CustomerWaiting;
         }
+    }
+
+    public override void PublishOpenEvent()
+    {
+        base.PublishOpenEvent();
+        isOpen = true;
+        Debug.Log("결제 다함!");
+        moneyConsumer.PayCompleteEvent -= PublishOpenEvent;
     }
 }

@@ -6,6 +6,8 @@ using DG.Tweening;
 
 public class ToCashDeskState : ToState
 {
+    
+    
     public ToCashDeskState(CustomerController customerController) => this.customerController = customerController;
     
     private StackCarrier stacable;
@@ -14,9 +16,9 @@ public class ToCashDeskState : ToState
     
     public override void Enter()
     {
+        customerController.SetDebugCurrentState(ECustomerStates.ToCashDeskState);
         base.Enter();
         
-        stacable = customerController.StackCarrier;
         cashDesk = customerController.CustomerManager.cashDesk;
         
         if(cashDesk.Count == 0) cashDesk.SetWaitingState();
@@ -26,8 +28,8 @@ public class ToCashDeskState : ToState
         wayPoints.Enqueue(customerController.CustomerManager.centerPoint);
         wayPoints.Enqueue(waitingSlot.waitPoint.transform);
         
-        stacable.allowOutPut = false;
-        stacable.allowInput = false;
+        carrier.allowOutPut = false;
+        carrier.allowInput = false;
 
         customerController.SetIsArrivedQueuePoint(true);
         

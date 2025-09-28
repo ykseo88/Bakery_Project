@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class ToState : IUnitState
-{
+{ 
     protected const float rotateDuration = 0.1f;
     protected static readonly int IDLE = Animator.StringToHash("Idle");
     protected static readonly int WALK = Animator.StringToHash("Walk");
@@ -30,6 +30,8 @@ public class ToState : IUnitState
         carrier = customerController.StackCarrier;
         agent.updateRotation = false;
         
+        if(carrier.isHasStack)animator.SetTrigger(STACK_WALK);
+        else animator.SetTrigger(WALK);
     }
 
     public virtual void Update()
@@ -52,15 +54,13 @@ public class ToState : IUnitState
             
             currentWayPoint = wayPoints.Dequeue();
             agent.SetDestination(currentWayPoint.position);
-
-            if(carrier.isHasStack)animator.SetTrigger(STACK_WALK);
-            else animator.SetTrigger(WALK);
-
         }
         else if (agent.remainingDistance <= agent.stoppingDistance)
         {
-            Debug.Log($"현재 향하는 곳: 위치 {agent.destination}, 커렌웨이포인트{currentWayPoint}");
             currentWayPoint = null;
+            if(carrier.isHasStack)animator.SetTrigger(STACK_WALK);
+            else animator.SetTrigger(WALK);
+            
             if (wayPoints.Count == 0)
             {
                 customerController.ChangeState(nextState);

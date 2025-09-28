@@ -35,12 +35,21 @@ public class WaitingQueue : MonoBehaviour
     [SerializeField] protected GameObject waitPointPrefab;
     [SerializeField] protected PoolManager poolManager;
     
+    [SerializeField] protected int onePerPrice;
+    public int OnePerPrice => onePerPrice;
+    
+    protected bool isLineQueue = false;
+    public bool IsLineQueue => isLineQueue;
+
+    public event Action UsingUpdateEvent;
+    public event Action OpenEvent;
+    
     public int  Count => waitQueue.Count;
     public bool IsFull => GetEmptyWaitingSlot() == null;
 
     protected virtual void Start()
     {
-        poolManager.SetPoolQueue(waitPointPrefab);
+        //poolManager.SetPoolQueue(waitPointPrefab);
         waitQueue.Clear();
     }
 
@@ -108,6 +117,15 @@ public class WaitingQueue : MonoBehaviour
         
         return null;
     }
-    
+
+    protected void PublishUsingUpdateEvent()
+    {
+        UsingUpdateEvent?.Invoke();
+    }
+
+    public virtual void PublishOpenEvent()
+    {
+        OpenEvent?.Invoke();
+    }
     
 }

@@ -15,6 +15,7 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private PoolManager poolManager;
     [SerializeField] private SAOMainField mainField;
     [SerializeField] private float goTableProbability;
+    public float GoTableProbability => goTableProbability;
     public ShowBasket showBasket;
     public CashDesk cashDesk;
     public EatTable eatTable;

@@ -16,7 +16,8 @@ public enum ECustomerStates
     ToTableState,
     GetTableState,
     EatingState,
-    WaitTableStete
+    WaitTableStete,
+    NoneState
 }
 
 public class CustomerController : UnitController
@@ -133,5 +134,9 @@ public class CustomerController : UnitController
         //stackCarrier.autoGrid.objRotation.y = orginStackAngle;
         isHasPaperBag = false; 
         isArrivedQueuePoint = false;
+        stateBubble.SetActive(false);
+        currentCustomerWantMark.enabled = false;
+        markWithNumber.enabled = false;
+        numberText.enabled = false;
     }
 }

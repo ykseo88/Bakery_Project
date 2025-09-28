@@ -6,6 +6,8 @@ using DG.Tweening;
 
 public class WaitBreadState : IUnitState
 {
+    private const string POS = "Pos";
+    
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
     private const string BREAD = "Bread";
@@ -19,6 +21,8 @@ public class WaitBreadState : IUnitState
     private AnimatorStateInfo stateInfo;
     private StackContainer stacable;
     private NavMeshAgent agent;
+
+    private bool isGoTable = false;
     
     public void Enter()
     {
@@ -32,18 +36,30 @@ public class WaitBreadState : IUnitState
         customerController.numberText.enabled = true;
         customerController.markWithNumber.sprite = customerController.mainField.GetSpriteByName(BREAD);
         customerController.SetIsArrivedQueuePoint(true);
+        float randFloat = Random.Range(0, 1f);
+        isGoTable = randFloat < customerController.mainField.goTableProbability;
     }
 
     public void Update()
     {
         customerController.numberText.SetText((customerController.wantBreadNum - customerController.StackCarrier.currentStackNum).ToString());
         if(stacable.isHasStack) animator.SetTrigger(STACK_IDLE);
-        if(customerController.CheckFullGetBread()) customerController.ChangeState(new ToCashDeskState(customerController));
+        if (customerController.CheckFullGetBread())
+        {
+            if(isGoTable) customerController.ChangeState(new ToTableState(customerController));
+            else customerController.ChangeState(new ToCashDeskState(customerController));
+            
+        }
         customerController.transform.DOLookAt(customerController.CustomerManager.showBasket.transform.position, rotateDuration, AxisConstraint.Y);
     }
 
     public void Exit()
     {
+        customerController.markWithNumber.enabled = false;
+        customerController.numberText.enabled = false;
+        customerController.currentCustomerWantMark.enabled = true;
+        customerController.currentCustomerWantMark.sprite = customerController.mainField.GetSpriteByName(POS);
+        
         animator.ResetTrigger(IDLE);
         animator.ResetTrigger(STACK_IDLE);
     }

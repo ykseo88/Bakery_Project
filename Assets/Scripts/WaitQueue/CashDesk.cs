@@ -27,16 +27,17 @@ public class CashDesk : WaitingQueue
     
     private PayState currentPayState = PayState.CustomerWaiting;
     private PaperBag currentPaperBag;
+    
+    
 
     private int payMoney = 0;
-    
-    public event Action PaymentCompletedEvent;
 
     protected override void Start()
     {
         base.Start();
         usingCustomer = null;
         poolManager.SetPoolQueue(paperBagPrefab);
+        isLineQueue = true;
     }
     
     protected void Update()
@@ -62,7 +63,7 @@ public class CashDesk : WaitingQueue
                         currentPayState = PayState.PaymentStart;
                         break;
                     case PayState.PaymentStart:
-                        payMoney = usingCustomer.StackCarrier.currentStackNum;
+                        payMoney = usingCustomer.StackCarrier.currentStackNum * onePerPrice;
                         usingCustomer.StackCarrier.GiveObject(currentPaperBag.stackContainer, true);
                         currentPayState = PayState.BreadInserting;
                         break;
@@ -136,7 +137,7 @@ public class CashDesk : WaitingQueue
         waitingSlots[^1].Customer = null;
         currentPayState = PayState.CustomerWaiting;
         
-        PaymentCompletedEvent?.Invoke();
+        PublishUsingUpdateEvent();
     }
 
     public void SetPaymentAvailable(bool available)
@@ -181,6 +182,7 @@ public class CashDesk : WaitingQueue
             currentPayState = PayState.CustomerWaiting;
         }
     }
+
     
     
 }
