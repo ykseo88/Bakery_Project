@@ -29,6 +29,11 @@ public class ToState : IUnitState
         agent = customerController.NavMeshAgent;
         carrier = customerController.StackCarrier;
         agent.updateRotation = false;
+
+        carrier.UpdateIsHasStack += SetAnimator;
+        
+        animator.ResetTrigger(STACK_IDLE);
+        animator.ResetTrigger(IDLE);
         
         if(carrier.isHasStack)animator.SetTrigger(STACK_WALK);
         else animator.SetTrigger(WALK);
@@ -43,6 +48,7 @@ public class ToState : IUnitState
     {
         if(carrier.isHasStack)animator.ResetTrigger(STACK_WALK);
         else animator.ResetTrigger(WALK);
+        agent.velocity = Vector3.zero;
     }
 
     protected void CheckArrivePoint(IUnitState nextState = null)
@@ -58,9 +64,6 @@ public class ToState : IUnitState
         else if (agent.remainingDistance <= agent.stoppingDistance)
         {
             currentWayPoint = null;
-            if(carrier.isHasStack)animator.SetTrigger(STACK_WALK);
-            else animator.SetTrigger(WALK);
-            
             if (wayPoints.Count == 0)
             {
                 customerController.ChangeState(nextState);
@@ -71,5 +74,11 @@ public class ToState : IUnitState
     public void EnqueueWayPoints(Transform point)
     {
         wayPoints.Enqueue(point);
+    }
+
+    protected void SetAnimator()
+    {
+        if(carrier.isHasStack) animator.SetTrigger(STACK_WALK);
+        else animator.SetTrigger(WALK);
     }
 }

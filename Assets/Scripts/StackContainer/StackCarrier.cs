@@ -82,10 +82,21 @@ public class StackCarrier : StackContainer
         while (currentStack.Count > 0 && stackContainer.GetCurrentStack().Count < stackContainer.maxStackNum && isContacted)
         {
             StackableObject tempSObj = GiveStackObject();
+
+            if (tempSObj != null && !tempSObj.gameObject.activeSelf)
+            {
+                tempSObj.gameObject.SetActive(true);
+                tempSObj.transform.position = transform.position;
+                tempSObj.transform.rotation = transform.rotation;
+                Debug.LogWarning($"자신의 스택에서 비활성화된 오브젝트({tempSObj.name})를 발견하여 재활성화합니다.");
+            }
+
             IsStartOneMoveEvent?.Invoke(tempSObj);
-            if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
+            if(tempSObj.autoGrid != null) tempSObj.autoGrid.RemoveElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
+            stackContainer.GetCurrentStack().Push(tempSObj);
+            stackContainer.currentStackObject = tempSObj;
             tempSObj.MoveStackableObject(tempSObj.transform.position, stackContainer, this, isDeActive);
             yield return new WaitForSeconds(tempSObj.PutTermRate * mainField.putTerm);
         }
@@ -102,9 +113,11 @@ public class StackCarrier : StackContainer
         {
             StackableObject tempSObj = stackContainer.GiveStackObject();
             IsStartOneMoveEvent?.Invoke(tempSObj);
-            if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
+            if(tempSObj.autoGrid != null) tempSObj.autoGrid.RemoveElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
+            currentStack.Push(tempSObj);
+            currentStackObject = tempSObj;
             tempSObj.MoveStackableObject(tempSObj.transform.position, this, stackContainer, isDeActive);
             yield return new WaitForSeconds(tempSObj.PutTermRate * mainField.putTerm);
         }
@@ -121,6 +134,27 @@ public class StackCarrier : StackContainer
     public void GiveObject(StackContainer stackContainer, bool isDeActive = false,  GameObject prefab = null)
     {
         StartCoroutine(GiveStart(stackContainer, isDeActive, prefab));
+    }
+
+    public void GetOneObject(StackableObject stackableObject, bool isDeActive = false, GameObject prefab = null)
+    {
+        
+    }
+    
+    public void GiveNewOneObject(StackContainer toStackContainer, bool isDeActive = false,  GameObject prefab = null)
+    {
+        toStackContainer.stackMovealbe = false;
+        isAleadyMoveable = true;
+        StackableObject tempSObj = PoolManager.instance.ActiveObject(prefab).GetComponent<StackableObject>();
+        IsStartOneMoveEvent?.Invoke(tempSObj);
+        if(tempSObj.autoGrid != null) tempSObj.autoGrid.RemoveElement(tempSObj.transform);
+        tempSObj.transform.SetParent(null);
+        tempSObj.CheckParentGrid();
+        currentStack.Push(tempSObj);
+        currentStackObject = tempSObj;
+        tempSObj.MoveStackableObject(tempSObj.transform.position, this, toStackContainer, isDeActive);
+        isAleadyMoveable = false;
+        toStackContainer.stackMovealbe = true;
     }
 
     private bool CheckMoveable(StackContainer stackContainer, bool isInput)

@@ -12,7 +12,6 @@ public class CustomerManager : MonoBehaviour
     public Transform tempPoint;
     
     [SerializeField] private GameObject customerPrefab;
-    [SerializeField] private PoolManager poolManager;
     [SerializeField] private SAOMainField mainField;
     [SerializeField] private float goTableProbability;
     public float GoTableProbability => goTableProbability;
@@ -29,7 +28,6 @@ public class CustomerManager : MonoBehaviour
 
     private void Start()
     {
-        poolManager.SetPoolQueue(customerPrefab);
         allowSpawnNum = showBasket.maxWaitingSlotNum;
         maxSpawnableNum = showBasket.maxWaitingSlotNum;
     }
@@ -44,7 +42,7 @@ public class CustomerManager : MonoBehaviour
         if (isSpawnable)
         {
             isSpawnable = false;
-            GameObject newCustomer = poolManager.ActiveObject(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+            GameObject newCustomer = PoolManager.instance.ActiveObject(customerPrefab, spawnPoint.position, spawnPoint.rotation);
             newCustomer.transform.SetParent(null);
             newCustomer.transform.TryGetComponent(out CustomerController customerController);
             customerController.SetCustomerManager(this);

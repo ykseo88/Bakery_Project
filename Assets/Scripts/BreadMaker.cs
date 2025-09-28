@@ -8,7 +8,6 @@ public class BreadMaker : MonoBehaviour
     [SerializeField] private GameObject breadPrefab;
     [SerializeField] private float outPutTerm;
     [SerializeField] private float outPutPower;
-    [SerializeField] private PoolManager poolManager;
     [SerializeField] private Transform bakeTransform;
     [SerializeField] private int MaxBakedAmount;
     private Rigidbody rigidbody;
@@ -20,7 +19,6 @@ public class BreadMaker : MonoBehaviour
     
     private void Start()
     {
-        poolManager.SetPoolQueue(breadPrefab);
         transform.TryGetComponent(out stackContainer);
     }
 
@@ -34,7 +32,7 @@ public class BreadMaker : MonoBehaviour
     {
         isBakealbe = false;
         currentBakedAmount++;
-        GameObject tempBread = poolManager.ActiveObject(breadPrefab, bakeTransform.position, bakeTransform.rotation);
+        GameObject tempBread = PoolManager.instance.ActiveObject(breadPrefab, bakeTransform.position, bakeTransform.rotation);
         tempBread.transform.TryGetComponent(out rigidbody);
         tempBread.transform.TryGetComponent(out Bread bread);
         bread.breadMaker = this;

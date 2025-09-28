@@ -14,7 +14,6 @@ public class MoneyCollector : MonoBehaviour
     [SerializeField] private int currentMoney;
     private UnitController currentUnit;
     private StackCarrier stackCarrier;
-    private AutoGrid autoGrid;
     private LayerMask UnitLayer;
     private int movingMoneyCount = 0;
     
@@ -22,7 +21,6 @@ public class MoneyCollector : MonoBehaviour
     void Start()
     {
         transform.TryGetComponent(out moneyInven);
-        transform.TryGetComponent(out autoGrid);
         
         UnitLayer = LayerMask.NameToLayer(UNIT);
         
@@ -63,16 +61,6 @@ public class MoneyCollector : MonoBehaviour
             GameManager.Instance.moneyAmountText.text = GameManager.Instance.money.ToString();
         }
     }
-    
-    private void UpdatePlayerMoney(EStackableObjects type)
-    {
-        GameManager.Instance.moneyAmountText.text = GameManager.Instance.money.ToString();
-    }
-
-    private void UpdatePlayerMoney()
-    {
-        GameManager.Instance.moneyAmountText.text = GameManager.Instance.money.ToString();
-    }
 
     private void OnTriggerStay(Collider other)
     {
@@ -86,7 +74,7 @@ public class MoneyCollector : MonoBehaviour
         {
             if (other.gameObject.layer == UnitLayer)
             {
-                if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false)
+                if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false && !currentUnit.VirtualStackCarrier.GetIsFullStack())
                 {
                     currentUnit.VirtualStackCarrier.GetObject(moneyInven, true);
                 }

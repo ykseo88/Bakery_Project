@@ -15,6 +15,7 @@ public enum ESequenceType
 
 public class AutoGrid : MonoBehaviour
 {
+    [SerializeField] private bool isActiveGrid = true;
     [SerializeField] private Vector3 maxCount = new Vector3(1, 100, 1);
     [SerializeField] private Vector3 spacing;
     public Vector3 objRotation;
@@ -45,22 +46,22 @@ public class AutoGrid : MonoBehaviour
         UpdateEmptyPosition();
     }
 
-    public void UpdateElements()
-    {
-        foreach (Transform child in transform)
+        public void UpdateElements()
         {
-            if (!elements.Contains(child))
+            elements.Clear();
+            foreach (Transform child in transform)
             {
                 elements.Add(child);
             }
+            SetGrid();
         }
-        SetGrid();
-    }
-
-    public void OutElement(Transform element)
+    public void RemoveElement(Transform element)
     {
-        elements.Remove(element);
-        SetGrid();
+        if (elements.Contains(element))
+        {
+            elements.Remove(element);
+            SetGrid();
+        }
     }
 
     public void InsertElement(Transform element)
@@ -119,6 +120,7 @@ public class AutoGrid : MonoBehaviour
 
     public void SetGrid()
     {
+        if (isActiveGrid == false) return;
         int firstAxis = 0;
         int secondAxis = 0;
         int lastAxis = 0;

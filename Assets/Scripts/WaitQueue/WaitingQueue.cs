@@ -33,8 +33,6 @@ public class WaitingQueue : MonoBehaviour
     public int maxWaitingSlotNum = 3;
     protected Queue<CustomerController> waitQueue = new Queue<CustomerController>();
     [SerializeField] protected GameObject waitPointPrefab;
-    [SerializeField] protected PoolManager poolManager;
-    
     [SerializeField] protected int onePerPrice;
     public int OnePerPrice => onePerPrice;
     
@@ -69,7 +67,7 @@ public class WaitingQueue : MonoBehaviour
         {
             if (waitingSlots.Count < maxWaitingSlotNum)
             {
-                poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
+                PoolManager.instance.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
                 waitPoint.transform.SetParent(transform);
                 WaitingSlot tempWaitingSlot = new WaitingSlot(waitPoint, customerController);
                 waitingSlots.Add(tempWaitingSlot);

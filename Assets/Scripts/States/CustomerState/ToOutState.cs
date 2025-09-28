@@ -13,6 +13,8 @@ public class ToOutState : ToState
     public override void Enter()
     {
         base.Enter();
+        customerController.SetDebugCurrentState(ECustomerStates.ToOutState);
+        customerController.stateBubble.SetActive(false);
         cashDesk = customerController.CustomerManager.cashDesk;
         wayPoints.Enqueue(cashDesk.customerOutPoint);
         wayPoints.Enqueue(customerController.CustomerManager.transform);

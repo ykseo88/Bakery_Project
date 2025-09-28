@@ -29,6 +29,7 @@ public class StackContainer : MonoBehaviour
     public AutoGrid autoGrid;
 
     public bool isHasStack;
+    public bool preIsHasStack;
     public EStackableType stackType;
     //public List<EStackableObjects> stackObjects = new List<EStackableObjects>();
     public EStackableObjects currentStackObjectType = EStackableObjects.None;
@@ -37,6 +38,7 @@ public class StackContainer : MonoBehaviour
     public int currentStackNum = 0;
     
     public event Action isStackCountChangedEvent;
+    public event Action UpdateIsHasStack;
 
     public bool stackMovealbe = true;
 
@@ -77,6 +79,7 @@ public class StackContainer : MonoBehaviour
 
     public void UpdateCurrentStackableObject()
     {
+        preIsHasStack = isHasStack;
         if (currentStack.Count > 0)
         {
             currentStackObjectType = currentStack.Peek().type;
@@ -87,6 +90,8 @@ public class StackContainer : MonoBehaviour
             currentStackObjectType = EStackableObjects.None;
             isHasStack = false;
         }
+        
+        if(preIsHasStack !=  isHasStack) UpdateIsHasStack?.Invoke();
     }
 
     public bool GetIsFullStack()
@@ -99,9 +104,9 @@ public class StackContainer : MonoBehaviour
         return currentStack.Count <= 0;
     }
     
-    public void GetStackObject(StackableObject stackableObject)
+    public void GetStackObject(StackableObject stackableObject, bool isPush = true)
     {
-        currentStack.Push(stackableObject);
+        if(isPush) currentStack.Push(stackableObject);
         if(stackPoint !=null){stackableObject.transform.SetParent(stackPoint.transform);}
         stackableObject.CheckParentGrid();
         currentStackObject = stackableObject;
@@ -109,7 +114,7 @@ public class StackContainer : MonoBehaviour
         
         if (stackableObject.transform.parent != null)
         {
-            stackableObject.autoGrid.InsertElement(stackableObject.transform);
+            stackableObject.autoGrid.UpdateElements();
         }
         
     }

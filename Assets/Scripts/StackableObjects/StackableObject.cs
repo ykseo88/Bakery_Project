@@ -71,7 +71,12 @@ public class StackableObject : MonoBehaviour
         else
         {
             toStackContainer.currentStackObjectType = type;
-            toStackContainer.GetStackObject(this);
+            toStackContainer.GetStackObject(this, false);
+        }
+
+        if (fromStackContainer != null && fromStackContainer.autoGrid != null)
+        {
+            fromStackContainer.autoGrid.UpdateElements();
         }
         
         //Debug.Log($"{this}가 {fromStackContainer}에서 {toStackContainer}로 이동됨. 현재 {toStackContainer}의 스택 수는 {toStackContainer.GetCurrentStack().Count}개!");
@@ -80,5 +85,10 @@ public class StackableObject : MonoBehaviour
     public virtual void MoveStackableObject(Vector3 start, StackContainer toStackContainer, StackContainer fromStackContainer, bool isDeActive)
     {
         StartCoroutine(MoveCoroutine(start, toStackContainer, fromStackContainer, isDeActive));
+    }
+
+    private void OnDestroy()
+    {
+        Debug.LogError($"{gameObject.name} 부서짐!");
     }
 }

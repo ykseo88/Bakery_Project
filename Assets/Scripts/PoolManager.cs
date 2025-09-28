@@ -10,10 +10,8 @@ public class PoolManager : MonoBehaviour
     {
         instance = this;
     }
-
-    // The key is the original prefab, the value is a queue of instances.
+    
     private Dictionary<GameObject, Queue<GameObject>> pool = new Dictionary<GameObject, Queue<GameObject>>();
-    // The key is the instance, the value is the original prefab.
     private Dictionary<GameObject, GameObject> prefabByInstance = new Dictionary<GameObject, GameObject>();
 
     public void SetPoolQueue(GameObject poolObject)
@@ -25,38 +23,43 @@ public class PoolManager : MonoBehaviour
 
     public GameObject ActiveObject(GameObject poolObject, Vector3 pos = default, Quaternion rot = default, Transform parent = null)
     {
-        // Ensure the pool for this prefab exists.
         if (!pool.ContainsKey(poolObject))
         {
-            SetPoolQueue(poolObject);
+            pool.Add(poolObject, new Queue<GameObject>());
         }
 
-        // Try to get an object from the pool.
-        if (pool[poolObject].Count > 0)
+        GameObject instance = null;
+
+        // Find a valid, non-destroyed object in the pool
+        while (pool[poolObject].Count > 0)
         {
-            GameObject instance = pool[poolObject].Dequeue();
-            
-            // Safety check, should always be inactive.
-            if (instance.activeSelf == false)
+            instance = pool[poolObject].Dequeue();
+            if (instance != null)
             {
-                instance.transform.SetParent(parent);
-                instance.transform.position = pos;
-                instance.transform.rotation = rot;
-                instance.SetActive(true);
-                
-                // Add mapping for the reused object.
-                prefabByInstance.Add(instance, poolObject);
-                
-                return instance;
+                // Found a valid object, stop searching.
+                break;
             }
+            Debug.LogWarning("Found and removed a destroyed object reference from the pool.");
         }
 
-        // If pool is empty or no inactive object was found, create a new one.
-        GameObject newInstance = Instantiate(poolObject, pos, rot, parent);
-        // Add mapping for the new object.
-        prefabByInstance.Add(newInstance, poolObject);
+        // If 'instance' is null here, the pool was empty or only contained destroyed objects.
+        if (instance == null)
+        {
+            // Create a new one if no valid pooled object was found.
+            instance = Instantiate(poolObject, pos, rot, parent);
+            prefabByInstance.Add(instance, poolObject); // Track the new instance
+        }
+        else
+        {
+            // Configure the reused object from the pool.
+            instance.transform.SetParent(parent);
+            instance.transform.position = pos;
+            instance.transform.rotation = rot;
+            instance.SetActive(true); // Always ensure it's active
+            prefabByInstance.Add(instance, poolObject); // Re-track the reused instance
+        }
         
-        return newInstance;
+        return instance;
     }
 
     public void DeActiveObject(GameObject instance)
@@ -70,8 +73,6 @@ public class PoolManager : MonoBehaviour
         }
         else
         {
-            // This case happens if you try to pool an object that was not created by this pool manager.
-            // It's safer to just destroy it to prevent issues.
             Debug.LogWarning("Deactivating an object that is not managed by the PoolManager. Destroying it instead.", instance);
             Destroy(instance);
         }

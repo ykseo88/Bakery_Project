@@ -20,13 +20,19 @@ public class ToTableState : ToState
         eatTable = customerController.CustomerManager.eatTable;
         
         if(eatTable.Count == 0) eatTable.SetWaitingState();
-        eatTable.Enqueue(customerController);
         
+        eatTable.Enqueue(customerController);
         wayPoints.Enqueue(customerController.CustomerManager.centerPoint);
         
         WaitingSlot waitingSlot = eatTable.GetWaitingSlotOrNullByCustomer(customerController);
         
         wayPoints.Enqueue(waitingSlot.waitPoint.transform);
+
+        if (eatTable.Count == 0 && eatTable.IsOpen)
+        {
+            currentWayPoint = eatTable.StopOverPointArray[^1];
+            wayPoints.Clear();
+        }
         
         carrier.allowOutPut = false;
         carrier.allowInput = false;
@@ -36,7 +42,9 @@ public class ToTableState : ToState
 
     public override void Update()
     {
-        CheckArrivePoint(new WaitTableStete(customerController));
+        if(eatTable.UsingCustomer.Equals(customerController) && eatTable.IsOpen) CheckArrivePoint(new EatingState(customerController));
+        else CheckArrivePoint(new WaitTableStete(customerController));
+        
     }
 
     public override void Exit()

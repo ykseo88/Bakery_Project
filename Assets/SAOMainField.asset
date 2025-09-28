@@ -21,6 +21,7 @@ MonoBehaviour:
   maxWantBreadNum: 5
   minWantBreadNum: 1
   customerSpawnTerm: 0.5
+  goTableProbability: 0.5
   playerSpeed: 0.02
   playerMaxStackNum: 0
   SFXVolume: 0
@@ -55,6 +56,10 @@ MonoBehaviour:
   SpritesByName:
   - name: Bread
     sprite: {fileID: 21300000, guid: d0e306dc7c8603d4199e01fcfbfe2cb4, type: 3}
+  - name: Pos
+    sprite: {fileID: 21300000, guid: 6261786b2b0e91c40abbc5dc20129285, type: 3}
+  - name: Table
+    sprite: {fileID: 21300000, guid: b0dbd9e441c054e40b4cc9b0e1b45d04, type: 3}
   putTime: 0.25
   putTerm: 0.15
   putCurve: 1.75

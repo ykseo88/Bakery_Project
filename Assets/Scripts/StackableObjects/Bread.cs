@@ -33,7 +33,9 @@ public class Bread : StackableObject
         {
             isfirst = false;
             breadMaker.ActiveBakeable();
+            
             breadMaker.transform.root.TryGetComponent(out StackInven stackInven);
+            transform.SetParent(stackInven.stackPoint);
             stackInven.GetStackObject(this);
         }
     }

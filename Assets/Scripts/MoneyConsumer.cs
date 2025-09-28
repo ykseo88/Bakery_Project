@@ -17,7 +17,8 @@ public class MoneyConsumer : MonoBehaviour
     [SerializeField] private TMP_Text currentNeedMoneyText;
     private UnitController currentUnit;
     private LayerMask UnitLayer;
-    private int movingMoneyCount = 0;
+    private int tempMoneyAmount;
+    private bool isFullTempMoney;
     
     private bool IsGivenMoney => needMoney > 0 && GameManager.Instance.money > 0;
     
@@ -28,6 +29,7 @@ public class MoneyConsumer : MonoBehaviour
     {
         transform.TryGetComponent(out moneyInven);
         currentNeedMoneyText.text = needMoney.ToString();
+        
         UnitLayer = LayerMask.NameToLayer(UNIT);
     }
 
@@ -45,7 +47,7 @@ public class MoneyConsumer : MonoBehaviour
     private void UpdateMoney(StackableObject finishedStackObj)
     {
         finishedStackObj.IsFinishMoveEvent -= UpdateMoney;
-        --needMoney;
+        //--needMoney;
         currentNeedMoneyText.text = needMoney.ToString();
     }
 
@@ -62,9 +64,13 @@ public class MoneyConsumer : MonoBehaviour
 
     private void SpawnMoneyForPlayer()
     {
-        if (GameManager.Instance.money > 0)
+        GameManager.Instance.moneyAmountText.text = GameManager.Instance.money.ToString();
+        currentNeedMoneyText.text = needMoney.ToString();
+        if (GameManager.Instance.money > 0 && needMoney > 0)
         {
-            --GameManager.Instance.money;
+            GameManager.Instance.money--;
+            needMoney--;
+            currentNeedMoneyText.text = needMoney.ToString();
             GameManager.Instance.moneyAmountText.text = GameManager.Instance.money.ToString();
             PoolManager.instance.ActiveObject(moneyPrefab).transform.TryGetComponent(out StackableObject stackObj);
             currentUnit.VirtualStackCarrier.GetStackObject(stackObj);
@@ -73,7 +79,7 @@ public class MoneyConsumer : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag(PLAYER))
+        if (other.gameObject.layer == UnitLayer)
         {
             if (currentUnit == null)
             {
@@ -85,12 +91,9 @@ public class MoneyConsumer : MonoBehaviour
             {
                 if (other.gameObject.layer == UnitLayer)
                 {
-                    if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false && GameManager.Instance.money > 0 && currentUnit.VirtualStackCarrier.currentStackObjectType == EStackableObjects.None)
+                    if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false && !currentUnit.VirtualStackCarrier.GetIsFullStack())
                     {
                         SpawnMoneyForPlayer();
-                    }
-                    else if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false && needMoney > 0 && currentUnit.VirtualStackCarrier.currentStackObjectType == EStackableObjects.Money)
-                    {
                         currentUnit.VirtualStackCarrier.GiveObject(moneyInven, true);
                     }
                 }

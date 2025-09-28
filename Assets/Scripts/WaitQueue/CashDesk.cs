@@ -36,7 +36,7 @@ public class CashDesk : WaitingQueue
     {
         base.Start();
         usingCustomer = null;
-        poolManager.SetPoolQueue(paperBagPrefab);
+        PoolManager.instance.SetPoolQueue(paperBagPrefab);
         isLineQueue = true;
     }
     
@@ -55,7 +55,7 @@ public class CashDesk : WaitingQueue
                         usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
                         usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
                         usingCustomer.StackCarrier.SetIsContact(true);
-                        GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position,
+                        GameObject tempPaperBag = PoolManager.instance.ActiveObject(paperBagPrefab, paperBagPoint.position,
                             paperBagPoint.rotation);
                         tempPaperBag.transform.TryGetComponent(out currentPaperBag);
                         tempPaperBag.transform.TryGetComponent(out StackableObject stackableObject);
@@ -108,7 +108,7 @@ public class CashDesk : WaitingQueue
         var waitingSlot = GetEmptyWaitingSlot();
         if (waitingSlot == null && waitingSlots.Count < maxWaitingSlotNum)
         {
-            poolManager.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
+            PoolManager.instance.ActiveObject(waitPointPrefab).transform.TryGetComponent(out WaitngPoint waitPoint);
             
             waitPoint.transform.SetParent(customerLine.transform);
             customerLine.UpdateElements();

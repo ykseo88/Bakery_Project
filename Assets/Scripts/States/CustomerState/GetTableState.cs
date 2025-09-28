@@ -12,15 +12,17 @@ public class GetTableState : ToState
     
     public override void Enter()
     {
-        base.Enter();
-        customerController.SetDebugCurrentState(ECustomerStates.GetTableState);
-        
         eatTable = customerController.CustomerManager.eatTable;
 
         foreach (Transform stopOverPoint in eatTable.StopOverPointArray)
         {
             wayPoints.Enqueue(stopOverPoint);
         }
+        
+        base.Enter();
+        customerController.SetDebugCurrentState(ECustomerStates.GetTableState);
+        
+        
     }
 
     public override void Update()

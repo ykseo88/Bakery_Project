@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 072670404266d94429ec3ce64e232232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isActiveGrid: 1
   maxCount: {x: 1, y: 100, z: 1}
   spacing: {x: 0, y: 0.3, z: 0}
   objRotation: {x: 0, y: 90, z: 0}
@@ -373,7 +374,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1865255041
+  m_SortingLayerID: -626269741
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
@@ -645,6 +646,7 @@ MonoBehaviour:
   stackPoint: {fileID: 623895942678471722}
   autoGrid: {fileID: 109716328571160414}
   isHasStack: 0
+  preIsHasStack: 0
   stackType: 0
   currentStackObjectType: 0
   currentStackObject: {fileID: 0}
@@ -813,7 +815,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1865255041
+  m_SortingLayerID: -626269741
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_AdditionalVertexStreams: {fileID: 0}
@@ -1202,7 +1204,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1865255041
+  m_SortingLayerID: -626269741
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: d0e306dc7c8603d4199e01fcfbfe2cb4, type: 3}
@@ -1264,7 +1266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2668682938747579204
 Transform:
   m_ObjectHideFlags: 0
@@ -1321,7 +1323,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1865255041
+  m_SortingLayerID: -626269741
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 065f4207e42804d7b9709bb3decb8553, type: 3}
