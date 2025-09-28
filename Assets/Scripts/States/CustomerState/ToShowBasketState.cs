@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 
-public class ToShowBasketState : ICustomerState
+public class ToShowBasketState : IUnitState
 {
     private enum Sequance
     { toStopOverPoint, toWaitPoint }

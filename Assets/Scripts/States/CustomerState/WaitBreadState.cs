@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 
-public class WaitBreadState : ICustomerState
+public class WaitBreadState : IUnitState
 {
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
@@ -36,7 +36,7 @@ public class WaitBreadState : ICustomerState
 
     public void Update()
     {
-        customerController.numberText.SetText((customerController.wantBreadNum - customerController.stackCarrier.currentStackNum).ToString());
+        customerController.numberText.SetText((customerController.wantBreadNum - customerController.StackCarrier.currentStackNum).ToString());
         if(stacable.isHasStack) animator.SetTrigger(STACK_IDLE);
         if(customerController.CheckFullGetBread()) customerController.ChangeState(new ToCashDeskState(customerController));
         customerController.transform.DOLookAt(customerController.CustomerManager.showBasket.transform.position, rotateDuration, AxisConstraint.Y);

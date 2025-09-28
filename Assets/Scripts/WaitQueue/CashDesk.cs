@@ -60,8 +60,9 @@ public class CashDesk : WaitingQueue
                 switch (currentPayState)
                 {
                     case PayState.CustomerWaiting:
-                        usingCustomer.stackCarrier.IsFinishGiveEvent += StartPacking;
-                        usingCustomer.stackCarrier.IsFinishGetEvent += DonePayment;
+                        usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
+                        usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
+                        usingCustomer.StackCarrier.SetIsContact(true);
                         GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position,
                             paperBagPoint.rotation);
                         tempPaperBag.transform.TryGetComponent(out currentPaperBag);
@@ -70,23 +71,22 @@ public class CashDesk : WaitingQueue
                         currentPayState = PayState.PaymentStart;
                         break;
                     case PayState.PaymentStart:
-                        payMoney = usingCustomer.stackCarrier.currentStackNum;
-                        usingCustomer.stackCarrier.GiveObject(currentPaperBag.transform.position,
-                            currentPaperBag.stackContainer, true);
+                        payMoney = usingCustomer.StackCarrier.currentStackNum;
+                        usingCustomer.StackCarrier.GiveObject(currentPaperBag.stackContainer, true);
                         currentPayState = PayState.BreadInserting;
                         break;
                     case PayState.BreadInserting:
-                        if (currentPaperBag.GetisGetAllBread())
+                        if (currentPaperBag.IsGetAllBread)
                         {
                             currentPaperBag.stackContainer.ClearAndDeactivateAll();
-                            usingCustomer.stackCarrier.GetObject(usingCustomer.stackCarrier.stackPoint.position, paperBagContainer);
+                            usingCustomer.StackCarrier.GetObject(paperBagContainer);
                         }
                         break;
                     case PayState.PaymentCompleted:
                         usingCustomer.SetIsGetPaperBag(true);
-                        usingCustomer.stackCarrier.autoGrid.objRotation.y -= rightAngle;
-                        usingCustomer.stackCarrier.IsFinishGiveEvent -= StartPacking;
-                        usingCustomer.stackCarrier.IsFinishGetEvent -= DonePayment;
+                        usingCustomer.StackCarrier.autoGrid.objRotation.y -= rightAngle;
+                        usingCustomer.StackCarrier.IsFinishGiveEvent -= StartPacking;
+                        usingCustomer.StackCarrier.IsFinishGetEvent -= DonePayment;
                         GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
                         usingCustomer = null;
                         moneyCollector.GetMoney(payMoney);
@@ -160,7 +160,7 @@ public class CashDesk : WaitingQueue
 
     private void StartPacking(EStackableObjects type)
     {
-        usingCustomer.stackCarrier.autoGrid.objRotation.y += rightAngle;
+        usingCustomer.StackCarrier.autoGrid.objRotation.y += rightAngle;
         PaperBagClose();
     }
 

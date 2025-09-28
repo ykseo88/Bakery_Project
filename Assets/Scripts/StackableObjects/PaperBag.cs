@@ -11,6 +11,7 @@ public class PaperBag : StackableObject
     private Animator animator;
     public StackContainer stackContainer;
     private bool isGetAllBread = false;
+    public bool IsGetAllBread => isGetAllBread;
 
     protected override void Start()
     {
@@ -27,11 +28,6 @@ public class PaperBag : StackableObject
     private void SetGetAllBread()
     {
         isGetAllBread = true;
-    }
-
-    public bool GetisGetAllBread()
-    {
-        return isGetAllBread;
     }
 
     public void SetClose()

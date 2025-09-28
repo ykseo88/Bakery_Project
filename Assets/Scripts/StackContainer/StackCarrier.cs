@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -11,12 +12,17 @@ public class StackCarrier : StackContainer
     public bool allowInput = true;
     public bool allowOutPut = true;
     
-    private bool isaleadyMoveable = false;
+    private bool isAleadyMoveable = false;
+    public bool IsAleadyMoveable => isAleadyMoveable;
 
-    private bool isContackted = false;
+    private bool isContacted = true;
+    public bool IsContacted => isContacted;
     
     public event Action<EStackableObjects> IsFinishGetEvent;
     public event Action<EStackableObjects> IsFinishGiveEvent;
+    
+    public event Action<StackableObject> IsStartOneMoveEvent;
+    public event Action IsDoneMoveEvent;
     
     // Start is called before the first frame update
 
@@ -24,7 +30,7 @@ public class StackCarrier : StackContainer
     {
         if (other.CompareTag(INTERRACTIONZONE_TAG))
         {
-            isContackted = true;
+            isContacted = true;
             Debug.Log($"{other.gameObject.name}과 상호작용");
             other.transform.TryGetComponent(out StackContainer stackContainer);
             
@@ -43,76 +49,78 @@ public class StackCarrier : StackContainer
             bool isOutputAble = mainField.CheackOutputAble(this, stackContainer, stackContainer.currentStackObjectType)  
                                 && CheckMoveable(stackContainer, false);
 
-            if (isInputAble && allowInput && isaleadyMoveable == false && stackContainer.stackMovealbe)
+            if (isInputAble && allowInput && IsAleadyMoveable == false && stackContainer.stackMovealbe)
             {
                 
-                GiveObject(stackContainer.stackPoint.position, stackContainer, CheckCurrentStackableObjectIsNone());
+                GiveObject(stackContainer, CheckCurrentStackableObjectIsNone());
             }
             else
             {
-                Debug.Log($"{gameObject.name}못 넣음!");
+                //Debug.Log($"{gameObject.name}못 넣음!");
             }
             
-            if (isOutputAble && allowOutPut && isaleadyMoveable == false && stackContainer.stackMovealbe)
+            if (isOutputAble && allowOutPut && IsAleadyMoveable == false && stackContainer.stackMovealbe)
             {
-                GetObject(stackPoint.position, stackContainer, stackContainer.CheckCurrentStackableObjectIsNone());
+                GetObject(stackContainer, stackContainer.CheckCurrentStackableObjectIsNone());
             }
             else
             {
-                Debug.Log($"{gameObject.name}못 꺼냄!");
+                //Debug.Log($"{gameObject.name}못 꺼냄!");
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(INTERRACTIONZONE_TAG)) isContackted = false;
+        if (other.CompareTag(INTERRACTIONZONE_TAG)) isContacted = false;
     }
 
-    private IEnumerator GiveStart(Vector3 end, StackContainer stackContainer, bool isDeActive)
+    private IEnumerator GiveStart(StackContainer stackContainer, bool isDeActive, GameObject prefab)
     {
         stackContainer.stackMovealbe = false;
-        isaleadyMoveable = true;
-        while (currentStack.Count > 0 && stackContainer.GetCurrentStack().Count < stackContainer.maxStackNum)
+        isAleadyMoveable = true;
+        while (currentStack.Count > 0 && stackContainer.GetCurrentStack().Count < stackContainer.maxStackNum && isContacted)
         {
             StackableObject tempSObj = GiveStackObject();
+            IsStartOneMoveEvent?.Invoke(tempSObj);
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, stackContainer, this, isDeActive);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, stackContainer, this, isDeActive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
-        isaleadyMoveable = false;
+        isAleadyMoveable = false;
         stackContainer.stackMovealbe = true;
         IsFinishGiveEvent?.Invoke(currentStackObjectType);
     }
 
-    private IEnumerator GetStart(Vector3 end, StackContainer stackContainer, bool isDeActive)
+    private IEnumerator GetStart(StackContainer stackContainer, bool isDeActive, GameObject prefab)
     {
         stackContainer.stackMovealbe = false;
-        isaleadyMoveable = true;
-        while (stackContainer.GetCurrentStack().Count > 0 && currentStack.Count < maxStackNum)
+        isAleadyMoveable = true;
+        while (stackContainer.GetCurrentStack().Count > 0 && currentStack.Count < maxStackNum && isContacted)
         {
             StackableObject tempSObj = stackContainer.GiveStackObject();
+            IsStartOneMoveEvent?.Invoke(tempSObj);
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.OutElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
-            tempSObj.MoveStackableObject(tempSObj.transform.position, end, this, stackContainer, isDeActive);
+            tempSObj.MoveStackableObject(tempSObj.transform.position, this, stackContainer, isDeActive);
             yield return new WaitForSeconds(mainField.putTerm);
         }
-        isaleadyMoveable = false;
+        isAleadyMoveable = false;
         stackContainer.stackMovealbe = true;
         IsFinishGetEvent?.Invoke(currentStackObjectType);
     }
 
-    public void GetObject(Vector3 end, StackContainer stackContainer, bool isDeActive = false)
+    public void GetObject(StackContainer stackContainer, bool isDeActive = false, GameObject prefab = null)
     {
-        StartCoroutine(GetStart(end, stackContainer, isDeActive));
+        StartCoroutine(GetStart(stackContainer, isDeActive, prefab));
     }
     
-    public void GiveObject(Vector3 end, StackContainer stackContainer, bool isDeActive = false)
+    public void GiveObject(StackContainer stackContainer, bool isDeActive = false,  GameObject prefab = null)
     {
-        StartCoroutine(GiveStart(end, stackContainer, isDeActive));
+        StartCoroutine(GiveStart(stackContainer, isDeActive, prefab));
     }
 
     private bool CheckMoveable(StackContainer stackContainer, bool isInput)
@@ -154,5 +162,10 @@ public class StackCarrier : StackContainer
         }
 
         return true;
+    }
+
+    public void SetIsContact(bool isContact)
+    {
+        isContacted = isContact;
     }
 }

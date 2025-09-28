@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ToOutState : ICustomerState
+public class ToOutState : IUnitState
 {
     private enum ESequance
     { ToStopOverPoint, ToWaitPoint }

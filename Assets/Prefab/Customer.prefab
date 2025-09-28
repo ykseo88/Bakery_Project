@@ -646,7 +646,7 @@ GameObject:
   - component: {fileID: 1684862000}
   - component: {fileID: 5615617700223589153}
   - component: {fileID: 4405800576864529967}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Customer
   m_TagString: Customer
   m_Icon: {fileID: 0}
@@ -763,7 +763,8 @@ MonoBehaviour:
   autoGrid: {fileID: 109716328571160414}
   isHasStack: 0
   stackType: 0
-  currentStackObject: 0
+  currentStackObjectType: 0
+  currentStackObject: {fileID: 0}
   currentStackNum: 0
   stackMovealbe: 1
   allowInput: 0
@@ -780,6 +781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edd27d9939a58543892355c362126ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  virtualStackCarrier: {fileID: 0}
   animator: {fileID: 0}
   showBasket: {fileID: 0}
   mainField: {fileID: 11400000, guid: e4da57bb09a78454ea828210b10e6a0d, type: 2}
@@ -788,7 +790,6 @@ MonoBehaviour:
   markWithNumber: {fileID: 7555260235747790009}
   numberText: {fileID: 989896320802446503}
   wantBreadNum: 0
-  stackCarrier: {fileID: 0}
   debugCurrentState: 0
 --- !u!1 &3898563997361661198
 GameObject:

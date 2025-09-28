@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerIdleState : IPlayerState
+public class PlayerIdleState : IUnitState
 {
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private PlayerController playerController;

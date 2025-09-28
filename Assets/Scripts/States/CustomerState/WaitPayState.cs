@@ -4,10 +4,11 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaitPayState : ICustomerState
+public class WaitPayState : IUnitState
 {
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private static readonly int STACK_IDLE = Animator.StringToHash("StackIdle");
+    private static readonly int STACK_WALK = Animator.StringToHash("StackWalk");
     private const float rotateDuration = 0.5f;
     
     private CustomerController customerController;
@@ -43,6 +44,12 @@ public class WaitPayState : ICustomerState
         {
             customerController.ChangeState(new ToOutState(customerController));
         }
+
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            animator.ResetTrigger(STACK_WALK);
+            animator.SetTrigger(STACK_IDLE);
+        }
     }
 
     public void Exit()
@@ -54,5 +61,7 @@ public class WaitPayState : ICustomerState
     {
         currentWaitingSlot = cashDesk.GetWaitingSlotOrNullByCustomer(customerController);
         agent.SetDestination(currentWaitingSlot.waitPoint.transform.position);
+        animator.ResetTrigger(STACK_IDLE);
+        animator.SetTrigger(STACK_WALK);
     }
 }

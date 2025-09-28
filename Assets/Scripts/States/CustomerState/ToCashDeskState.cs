@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 
-public class ToCashDeskState : ICustomerState
+public class ToCashDeskState : IUnitState
 {
     private enum Sequance
     { toStopOverPoint, toWaitPoint }

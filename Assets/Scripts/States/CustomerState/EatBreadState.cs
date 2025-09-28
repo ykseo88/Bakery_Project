@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EatBreadState : ICustomerState
+public class EatBreadState : IUnitState
 {
     private CustomerController customerController;
     

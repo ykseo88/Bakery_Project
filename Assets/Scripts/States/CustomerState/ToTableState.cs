@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ToTableState : ICustomerState
+public class ToTableState : IUnitState
 {
     private CustomerController customerController;
     public ToTableState(CustomerController customerController) => this.customerController =  customerController;

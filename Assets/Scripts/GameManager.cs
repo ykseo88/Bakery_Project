@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
     public SAOMainField mainField;
 
     public int money = 0;
+    
+    public TMP_Text moneyAmountText;
 
     private void Awake()
     {

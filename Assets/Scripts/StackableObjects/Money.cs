@@ -7,6 +7,7 @@ public class Money : StackableObject
     // Start is called before the first frame update
     void Start()
     {
+        type = EStackableObjects.Money;
         isNoneStack = true;
     }
 

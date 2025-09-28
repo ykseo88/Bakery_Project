@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : UnitController
 {
     [SerializeField] private SAOMainField mainField;
     [SerializeField] private InputManager inputManager;
@@ -12,23 +12,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject playerModel;
     private Vector2 moveValue;
     private Vector2 rotateValue;
-    private IPlayerState currentState;
-    private StackCarrier stackCarrier;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         ChangeState(new PlayerIdleState(this));
         transform.TryGetComponent(out stackCarrier);
     }
     
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+        
         if (joystickController.isOnJoystick)
         {
             moveValue = joystickController.GetInputVector();
             rotateValue = joystickController.GetInputVector();
         }
-        currentState.Update();
         UpdateMove();
         UpdateRotation();
     }
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(rotateValue.x, 0, rotateValue.y).normalized, Vector3.up);
     }
     
-    public void ChangeState(IPlayerState newState)
+    public void ChangeState(IUnitState newState)
     {
         currentState?.Exit();
         currentState = newState;

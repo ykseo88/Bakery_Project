@@ -17,7 +17,7 @@ public enum ECustomerStates
     EatBreadState,
 }
 
-public class CustomerController : MonoBehaviour
+public class CustomerController : UnitController
 {
     
     
@@ -28,13 +28,12 @@ public class CustomerController : MonoBehaviour
     public int PersonalId { get;  private set; }
     public Animator animator;
     private NavMeshAgent navMeshAgent;
-    private ICustomerState currentState;
+    
     
     private CustomerManager customerManager;
     public CustomerManager CustomerManager=> customerManager;
     
     [SerializeField] private WaitingQueue showBasket;
-    public ICustomerState CurrentState => currentState;
     public SAOMainField mainField; 
     
     public GameObject stateBubble;
@@ -44,7 +43,6 @@ public class CustomerController : MonoBehaviour
 
     public int wantBreadNum;
     private bool isHasPaperBag = false;
-    public StackCarrier stackCarrier;
     
     private bool isArrivedQueuePoint = false;
     
@@ -55,9 +53,9 @@ public class CustomerController : MonoBehaviour
     public event Action OnImpactEvent;
     
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        //ChangeState(new ToShowBasketState(this));
+        base.Start();
         
         wantBreadNum = Random.Range(mainField.minWantBreadNum, mainField.maxWantBreadNum + 1);
         stackCarrier.maxStackNum = wantBreadNum;
@@ -71,17 +69,6 @@ public class CustomerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        currentState.Update();
-    }
-    
-    public void ChangeState(ICustomerState newState)
-    {
-        currentState?.Exit();
-        currentState = newState;
-        currentState.Enter();
-    }
 
     public bool CheckFullGetBread()
     {
