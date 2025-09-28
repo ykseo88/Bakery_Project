@@ -31,12 +31,12 @@ public class CashDesk : WaitingQueue
     
 
     private int payMoney = 0;
+    private int payAmount = 0;
 
     protected override void Start()
     {
         base.Start();
         usingCustomer = null;
-        PoolManager.instance.SetPoolQueue(paperBagPrefab);
         isLineQueue = true;
     }
     
@@ -55,6 +55,8 @@ public class CashDesk : WaitingQueue
                         usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
                         usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
                         usingCustomer.StackCarrier.SetIsContact(true);
+                        payAmount = usingCustomer.StackCarrier.currentStackNum;
+                        payMoney = payAmount * onePerPrice;
                         GameObject tempPaperBag = PoolManager.instance.ActiveObject(paperBagPrefab, paperBagPoint.position,
                             paperBagPoint.rotation);
                         tempPaperBag.transform.TryGetComponent(out currentPaperBag);
@@ -63,11 +65,11 @@ public class CashDesk : WaitingQueue
                         currentPayState = PayState.PaymentStart;
                         break;
                     case PayState.PaymentStart:
-                        payMoney = usingCustomer.StackCarrier.currentStackNum * onePerPrice;
+                        
                         usingCustomer.StackCarrier.GiveObject(currentPaperBag.stackContainer, true);
-                        currentPayState = PayState.BreadInserting;
+                        currentPayState = PayState.Processing;
                         break;
-                    case PayState.BreadInserting:
+                    case PayState.Processing:
                         if (currentPaperBag.IsGetAllBread)
                         {
                             currentPaperBag.stackContainer.ClearAndDeactivateAll();
@@ -76,7 +78,7 @@ public class CashDesk : WaitingQueue
                         break;
                     case PayState.PaymentCompleted:
                         usingCustomer.SetIsGetPaperBag(true);
-                        usingCustomer.StackCarrier.autoGrid.objRotation.y -= rightAngle;
+                        //usingCustomer.StackCarrier.autoGrid.objRotation.y -= rightAngle;
                         usingCustomer.StackCarrier.IsFinishGiveEvent -= StartPacking;
                         usingCustomer.StackCarrier.IsFinishGetEvent -= DonePayment;
                         GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
@@ -97,6 +99,8 @@ public class CashDesk : WaitingQueue
             if (Count == 0) return;
             
             usingCustomer = Dequeue();
+            
+            PublishNewUdateEvent(usingCustomer);
 
             if (currentPayState == PayState.PaymentCompleted) UpdateQueuePoint();
             

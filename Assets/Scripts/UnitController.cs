@@ -7,6 +7,8 @@ public class UnitController : MonoBehaviour
 {
     protected StackCarrier stackCarrier;
     [SerializeField] protected StackCarrier virtualStackCarrier;
+    [SerializeField] protected SAOMainField mainField;
+    public SAOMainField MainField => mainField;
     
     protected IUnitState currentState;
     public IUnitState CurrentState => currentState;

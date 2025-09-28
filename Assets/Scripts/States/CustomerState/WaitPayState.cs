@@ -26,7 +26,7 @@ public class WaitPayState : WaitState
 
     public override void Update()
     {
-        CheckWait(new ToOutState(customerController), Vector3.back, customerController.CheckGetPaperBag());
+        CheckWait(new ToOutState(customerController, cashDesk.customerOutPoint), customerController.transform.position + Vector3.back, customerController.CheckGetPaperBag());
 
     }
 

@@ -1,80 +1,135 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PoolManager : MonoBehaviour
 {
+    // Singleton instance
     public static PoolManager instance;
+    
+    private readonly Dictionary<GameObject, Queue<GameObject>> pool = new Dictionary<GameObject, Queue<GameObject>>();
+    private readonly Dictionary<GameObject, GameObject> prefabByInstance = new Dictionary<GameObject, GameObject>();
 
     private void Awake()
     {
         instance = this;
     }
-    
-    private Dictionary<GameObject, Queue<GameObject>> pool = new Dictionary<GameObject, Queue<GameObject>>();
-    private Dictionary<GameObject, GameObject> prefabByInstance = new Dictionary<GameObject, GameObject>();
 
-    public void SetPoolQueue(GameObject poolObject)
+    public GameObject ActivateGameObject(GameObject Obj, Vector3 pos = default(Vector3),
+        Quaternion rot = default(Quaternion), Transform parent = default(Transform))
     {
-        if (pool.ContainsKey(poolObject)) return;
-        
-        pool.Add(poolObject, new Queue<GameObject>());
-    }
+        PrefabType type =  PrefabUtility.GetPrefabType(Obj);
 
-    public GameObject ActiveObject(GameObject poolObject, Vector3 pos = default, Quaternion rot = default, Transform parent = null)
-    {
-        if (!pool.ContainsKey(poolObject))
+        if (type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance)
         {
-            pool.Add(poolObject, new Queue<GameObject>());
-        }
-
-        GameObject instance = null;
-
-        // Find a valid, non-destroyed object in the pool
-        while (pool[poolObject].Count > 0)
-        {
-            instance = pool[poolObject].Dequeue();
-            if (instance != null)
+            
+            for (int i = 0; i < pool[prefabByInstance[Obj]].Count; i++)
             {
-                // Found a valid object, stop searching.
-                break;
+                GameObject tempObj = pool[Obj].Dequeue();
+                if (tempObj.activeSelf == false)
+                {
+                    tempObj.transform.SetParent(parent);
+                    tempObj.transform.position = pos;
+                    tempObj.transform.rotation = rot;
+                    return tempObj;
+                }
+                Debug.Log($"{Obj.name} 인스턴스이고 재활용한다");
+                pool[Obj].Enqueue(tempObj);
             }
-            Debug.LogWarning("Found and removed a destroyed object reference from the pool.");
+            
+            Debug.Log($"{Obj.name} 인스턴스이고 새로 줄거다");
+            GameObject newObj = Instantiate(Obj, pos, rot, parent);
+            prefabByInstance.Add(newObj, Obj);
+            return newObj;
+        }
+        else if (type == PrefabType.Prefab)
+        {
+            
+            if (pool.ContainsKey(Obj) == false)
+            {
+                Debug.Log($"{Obj.name} 프리펩이고 풀에 존재하지 않는다");
+                pool.Add(Obj, new Queue<GameObject>());
+                GameObject tempObj = Instantiate(Obj, pos, rot, parent);
+                prefabByInstance.Add(tempObj, Obj);
+                return tempObj;
+            }
+            else
+            {
+                
+                for (int i = 0; i < pool[Obj].Count; i++)
+                {
+                    GameObject tempObj = pool[Obj].Dequeue();
+                    if (tempObj.activeSelf == false)
+                    {
+                        Debug.Log($"{Obj.name} 프리펩이고 풀에 존재해서 재활용한다.");
+                        tempObj.transform.SetParent(parent);
+                        tempObj.transform.position = pos;
+                        tempObj.transform.rotation = rot;
+                        return tempObj;
+                    }
+                    pool[Obj].Enqueue(tempObj);
+                }
+                
+                Debug.Log($"{Obj.name} 프리펩이고 풀에 남는게 없어서 새로 준다");
+                GameObject newObj = Instantiate(Obj, pos, rot, parent);
+                prefabByInstance.Add(newObj, Obj);
+                return newObj;
+            }
         }
 
-        // If 'instance' is null here, the pool was empty or only contained destroyed objects.
-        if (instance == null)
-        {
-            // Create a new one if no valid pooled object was found.
-            instance = Instantiate(poolObject, pos, rot, parent);
-            prefabByInstance.Add(instance, poolObject); // Track the new instance
-        }
-        else
-        {
-            // Configure the reused object from the pool.
-            instance.transform.SetParent(parent);
-            instance.transform.position = pos;
-            instance.transform.rotation = rot;
-            instance.SetActive(true); // Always ensure it's active
-            prefabByInstance.Add(instance, poolObject); // Re-track the reused instance
-        }
-        
-        return instance;
+        return null;
     }
 
-    public void DeActiveObject(GameObject instance)
+    public void DeActivateObject(GameObject Obj)
     {
-        if (prefabByInstance.TryGetValue(instance, out GameObject originalPrefab))
+        Obj.SetActive(false);
+        PrefabType type =  PrefabUtility.GetPrefabType(Obj);
+
+        if (type == PrefabType.PrefabInstance || type == PrefabType.DisconnectedPrefabInstance)
         {
-            instance.SetActive(false);
-            instance.transform.SetParent(transform);
-            pool[originalPrefab].Enqueue(instance);
-            prefabByInstance.Remove(instance); // Clean up the mapping
+            pool[prefabByInstance[Obj]].Enqueue(Obj);
         }
-        else
+        else if (type == PrefabType.Prefab)
         {
-            Debug.LogWarning("Deactivating an object that is not managed by the PoolManager. Destroying it instead.", instance);
-            Destroy(instance);
+            pool[Obj].Enqueue(Obj);
         }
+        
+    }
+
+    public void SetPoolQueue(GameObject Obj)
+    {
+        pool.Add(Obj, new Queue<GameObject>());
+    }
+
+    public GameObject ActiveObject(GameObject Obj, Vector3 pos = default(Vector3),
+        Quaternion rot = default(Quaternion), Transform parent = default(Transform))
+    {
+        if(pool.ContainsKey(Obj) == false) SetPoolQueue(Obj);
+        
+        for (int i = 0; i < pool[Obj].Count; i++)
+        {
+            GameObject tempObj = pool[Obj].Dequeue();
+            if (tempObj.activeSelf == false)
+            {
+                tempObj.SetActive(true);
+                tempObj.transform.SetParent(parent);
+                tempObj.transform.position = pos;
+                tempObj.transform.rotation = rot;
+                pool[Obj].Enqueue(tempObj);
+                return tempObj;
+            }
+            pool[Obj].Enqueue(Obj);
+        }
+        
+        GameObject newObj = Instantiate(Obj, pos, rot, parent);
+        prefabByInstance.Add(newObj, Obj);
+        pool[Obj].Enqueue(newObj);
+        return newObj;
+    }
+
+    public void DeActiveObject(GameObject Obj)
+    {
+        Obj.SetActive(false);
     }
 }

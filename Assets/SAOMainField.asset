@@ -22,7 +22,7 @@ MonoBehaviour:
   minWantBreadNum: 1
   customerSpawnTerm: 0.5
   goTableProbability: 0.5
-  playerSpeed: 0.02
+  playerSpeed: 0.1
   playerMaxStackNum: 0
   SFXVolume: 0
   stackAccessRegister:
@@ -63,3 +63,4 @@ MonoBehaviour:
   putTime: 0.25
   putTerm: 0.15
   putCurve: 1.75
+  putCurveMinHeight: 1

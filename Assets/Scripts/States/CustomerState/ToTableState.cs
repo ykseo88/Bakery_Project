@@ -27,12 +27,6 @@ public class ToTableState : ToState
         WaitingSlot waitingSlot = eatTable.GetWaitingSlotOrNullByCustomer(customerController);
         
         wayPoints.Enqueue(waitingSlot.waitPoint.transform);
-
-        if (eatTable.Count == 0 && eatTable.IsOpen)
-        {
-            currentWayPoint = eatTable.StopOverPointArray[^1];
-            wayPoints.Clear();
-        }
         
         carrier.allowOutPut = false;
         carrier.allowInput = false;

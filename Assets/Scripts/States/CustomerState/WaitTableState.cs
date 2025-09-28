@@ -18,7 +18,7 @@ public class WaitTableStete : WaitState
         
         eatTable = customerController.CustomerManager.eatTable;
         
-        customerController.currentCustomerWantMark.sprite = customerController.mainField.GetSpriteByName(TABLE);
+        customerController.currentCustomerWantMark.sprite = customerController.MainField.GetSpriteByName(TABLE);
         
         eatTable.UsingUpdateEvent += UpdateWaitPoint;
     }
@@ -26,14 +26,14 @@ public class WaitTableStete : WaitState
     public override void Update()
     {
 
-        switch (eatTable.IsOpen)
+        switch (eatTable.IsOpen && !eatTable.IsDirty)
         {
             case true:
-                CheckWait(new GetTableState(customerController), Vector3.back,
+                if (eatTable.UsingCustomer == null) return;
+                CheckWait(new GetTableState(customerController), eatTable.FoodPoint.position,
                     eatTable.UsingCustomer.Equals(customerController));
                 break;
             case false:
-                // 테이블 안 열렸을 때 처리
                 customerController.transform.DOLookAt(customerController.transform.position + Vector3.back, rotateDuration, AxisConstraint.Y);
                 
                 break;
@@ -42,6 +42,7 @@ public class WaitTableStete : WaitState
 
     public override void Exit()
     {
+        base.Exit();
         eatTable.UsingUpdateEvent -= UpdateWaitPoint;
     }
 
@@ -52,7 +53,4 @@ public class WaitTableStete : WaitState
         animator.ResetTrigger(STACK_IDLE);
         animator.SetTrigger(STACK_WALK);
     }
-    
-    private void StopWaiting()
-    {}
 }

@@ -29,8 +29,7 @@ public class ToState : IUnitState
         agent = customerController.NavMeshAgent;
         carrier = customerController.StackCarrier;
         agent.updateRotation = false;
-
-        carrier.UpdateIsHasStack += SetAnimator;
+        agent.enabled = true;
         
         animator.ResetTrigger(STACK_IDLE);
         animator.ResetTrigger(IDLE);
@@ -74,11 +73,5 @@ public class ToState : IUnitState
     public void EnqueueWayPoints(Transform point)
     {
         wayPoints.Enqueue(point);
-    }
-
-    protected void SetAnimator()
-    {
-        if(carrier.isHasStack) animator.SetTrigger(STACK_WALK);
-        else animator.SetTrigger(WALK);
     }
 }

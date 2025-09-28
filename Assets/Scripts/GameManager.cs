@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public int money = 0;
     
     public TMP_Text moneyAmountText;
+    
+    public EatTable eatTable;
 
     private void Awake()
     {

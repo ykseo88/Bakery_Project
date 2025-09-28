@@ -23,7 +23,7 @@ public enum PayState
 {
     CustomerWaiting,
     PaymentStart,
-    BreadInserting,
+    Processing,
     PaymentCompleted,
 }
 
@@ -40,6 +40,7 @@ public class WaitingQueue : MonoBehaviour
     public bool IsLineQueue => isLineQueue;
 
     public event Action UsingUpdateEvent;
+    public event Action<UnitController> NewUpdateEvent;
     public event Action OpenEvent;
     
     public int  Count => waitQueue.Count;
@@ -124,6 +125,11 @@ public class WaitingQueue : MonoBehaviour
     public virtual void PublishOpenEvent()
     {
         OpenEvent?.Invoke();
+    }
+
+    public virtual void PublishNewUdateEvent(UnitController unit)
+    {
+        NewUpdateEvent?.Invoke(unit);
     }
     
 }

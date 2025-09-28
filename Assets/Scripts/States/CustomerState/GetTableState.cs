@@ -6,18 +6,37 @@ using UnityEngine.AI;
 
 public class GetTableState : ToState
 {
-    public GetTableState(CustomerController customerController) => this.customerController = customerController;
+    private bool isRight;
+    public GetTableState(CustomerController customerController, bool isRight = false)
+    {
+        this.customerController = customerController;
+        this.isRight = isRight;
+    }
     
     private EatTable eatTable;
     
     public override void Enter()
     {
+        customerController.SetDebugCurrentState(ECustomerStates.GetTableState);
+        
         eatTable = customerController.CustomerManager.eatTable;
+        
+        if(eatTable.Count == 0) eatTable.SetWaitingState();
 
-        foreach (Transform stopOverPoint in eatTable.StopOverPointArray)
+        if (isRight)
         {
-            wayPoints.Enqueue(stopOverPoint);
+            eatTable.Enqueue(customerController);
+            wayPoints.Enqueue(eatTable.SitPoint);
         }
+        else
+        {
+            foreach (Transform stopOverPoint in eatTable.StopOverPointArray)
+            {
+                wayPoints.Enqueue(stopOverPoint);
+            }
+        }
+
+        
         
         base.Enter();
         customerController.SetDebugCurrentState(ECustomerStates.GetTableState);

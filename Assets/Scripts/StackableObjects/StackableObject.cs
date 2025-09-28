@@ -8,7 +8,7 @@ public enum EStackableObjects
     None,
     Bread,
     Money,
-    PaperBag
+    PaperBag,
 }
 
 public class StackableObject : MonoBehaviour

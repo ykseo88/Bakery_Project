@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DG.Tweening;
 
 public class EatingState : IUnitState
 {
-    private static readonly int Sit = Animator.StringToHash("Sit");
+    private static readonly int Sit = Animator.StringToHash("Sitting_Talking");
+    private static readonly int WALK = Animator.StringToHash("Defalut_Walk");
+    private static float offsetY = 0.5f;
     
     private CustomerController customerController;
     
@@ -32,17 +35,17 @@ public class EatingState : IUnitState
         customerController.transform.position = eatTable.SitPoint.position;
         customerController.transform.rotation = eatTable.SitPoint.localRotation;
         
-        animator.SetTrigger(Sit);
+        animator.Play(Sit);
     }
 
     public void Update()
     {
-        customerController.transform.position = eatTable.SitPoint.position;
-        customerController.transform.rotation = eatTable.SitPoint.localRotation;
+        customerController.transform.DOLookAt(eatTable.FoodPoint.position + Vector3.down * offsetY, 0.1f);
+        if(eatTable.UsingCustomer == null) customerController.ChangeState(new ToOutState(customerController, customerController.CustomerManager.centerPoint));
     }
 
     public void Exit()
     {
-        
+        animator.Play(WALK);
     }
 }

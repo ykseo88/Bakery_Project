@@ -10,7 +10,7 @@ public class MoneyCollector : MonoBehaviour
     
     
     [SerializeField] private GameObject MoneyPrefab;
-    private StackInven moneyInven;
+    private StackContainer moneyInven;
     [SerializeField] private int currentMoney;
     private UnitController currentUnit;
     private StackCarrier stackCarrier;
@@ -64,6 +64,10 @@ public class MoneyCollector : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        other.transform.TryGetComponent(out UnitController unit);
+        if (unit.MainField.CheackOutputAble(unit.StackCarrier, moneyInven, EStackableObjects.Money) ==
+            false) return;
+        
         if (currentUnit == null)
         {
             other.transform.TryGetComponent(out currentUnit);
@@ -74,6 +78,7 @@ public class MoneyCollector : MonoBehaviour
         {
             if (other.gameObject.layer == UnitLayer)
             {
+               
                 if (currentUnit.VirtualStackCarrier.IsAleadyMoveable == false && !currentUnit.VirtualStackCarrier.GetIsFullStack())
                 {
                     currentUnit.VirtualStackCarrier.GetObject(moneyInven, true);

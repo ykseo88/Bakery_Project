@@ -39,7 +39,6 @@ public class CustomerController : UnitController
     public CustomerManager CustomerManager=> customerManager;
     
     [SerializeField] private WaitingQueue showBasket;
-    public SAOMainField mainField; 
     
     public GameObject stateBubble;
     public SpriteRenderer currentCustomerWantMark;

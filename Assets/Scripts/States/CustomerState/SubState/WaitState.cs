@@ -26,6 +26,7 @@ public class WaitState : IUnitState
         agent = customerController.NavMeshAgent;
         carrier = customerController.StackCarrier;
         agent.updateRotation = false;
+        agent.enabled = true;
         
         if(carrier.isHasStack)animator.SetTrigger(STACK_IDLE);
         else animator.SetTrigger(IDLE);
@@ -45,7 +46,7 @@ public class WaitState : IUnitState
 
     protected void CheckWait(IUnitState nextState, Vector3 seeAngle, bool isMyTurn = false)
     {
-        customerController.transform.DOLookAt(customerController.transform.position + seeAngle, rotateDuration, AxisConstraint.Y);
+        customerController.transform.DOLookAt(seeAngle, rotateDuration, AxisConstraint.Y);
         
         if (agent.remainingDistance <= agent.stoppingDistance)
         {

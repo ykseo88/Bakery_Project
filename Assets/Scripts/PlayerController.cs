@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerController : UnitController
 {
-    [SerializeField] private SAOMainField mainField;
     [SerializeField] private InputManager inputManager;
     public Animator animator;
     [SerializeField] private JoystickController joystickController;
