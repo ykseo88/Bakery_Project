@@ -22,8 +22,8 @@ public class StackContainer : MonoBehaviour
     
     protected Stack<StackableObject> currentStack = new Stack<StackableObject>();
     protected SAOMainField mainField;
-    [SerializeField] protected float putTime = 0.2f;
-    [SerializeField] protected float putTerm = 0.1f;
+    protected float putTime = 1f;
+    protected float putTerm = 1f;
     public int maxStackNum = 10;
     public Transform stackPoint;
     public AutoGrid autoGrid;
@@ -105,6 +105,7 @@ public class StackContainer : MonoBehaviour
         if(stackPoint !=null){stackableObject.transform.SetParent(stackPoint.transform);}
         stackableObject.CheckParentGrid();
         currentStackObject = stackableObject;
+        putTerm = mainField.putTerm * stackableObject.PutTermRate;
         
         if (stackableObject.transform.parent != null)
         {

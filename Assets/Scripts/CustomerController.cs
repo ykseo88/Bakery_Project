@@ -14,7 +14,9 @@ public enum ECustomerStates
     WaitPayState,
     ToOutState,
     ToTableState,
-    EatBreadState,
+    GetTableState,
+    EatingState,
+    WaitTableStete
 }
 
 public class CustomerController : UnitController
@@ -26,8 +28,10 @@ public class CustomerController : UnitController
     
 
     public int PersonalId { get;  private set; }
-    public Animator animator;
+    private Animator animator;
+    public Animator Animator => animator;
     private NavMeshAgent navMeshAgent;
+    public NavMeshAgent NavMeshAgent => navMeshAgent;
     
     
     private CustomerManager customerManager;

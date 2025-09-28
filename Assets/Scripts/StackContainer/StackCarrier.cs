@@ -87,7 +87,7 @@ public class StackCarrier : StackContainer
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
             tempSObj.MoveStackableObject(tempSObj.transform.position, stackContainer, this, isDeActive);
-            yield return new WaitForSeconds(mainField.putTerm);
+            yield return new WaitForSeconds(tempSObj.PutTermRate * mainField.putTerm);
         }
         isAleadyMoveable = false;
         stackContainer.stackMovealbe = true;
@@ -106,7 +106,7 @@ public class StackCarrier : StackContainer
             tempSObj.transform.SetParent(null);
             tempSObj.CheckParentGrid();
             tempSObj.MoveStackableObject(tempSObj.transform.position, this, stackContainer, isDeActive);
-            yield return new WaitForSeconds(mainField.putTerm);
+            yield return new WaitForSeconds(tempSObj.PutTermRate * mainField.putTerm);
         }
         isAleadyMoveable = false;
         stackContainer.stackMovealbe = true;

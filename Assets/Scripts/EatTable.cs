@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CashDesk : WaitingQueue
+public class EatTable : WaitingQueue
 {
     private const float arriveDistance = 0.5f;
     private const float rightAngle = 90f;
     
     private StackContainer showBasketContainer;
     private CustomerController usingCustomer;
+    public CustomerController UsingCustomer => usingCustomer;
     
     [SerializeField] private GameObject paperBagPrefab;
     [SerializeField] private ContacktZone contacktZone;
@@ -17,13 +18,16 @@ public class CashDesk : WaitingQueue
     [SerializeField] private MoneyCollector moneyCollector;
     
     [Header("위치")]
-    public Transform customerOutPoint;
-    [SerializeField] private Transform paperBagPoint;
-    [SerializeField] private StackContainer paperBagContainer;
+    [SerializeField] Transform[] stopOverPointArray;
+    public Transform[] StopOverPointArray => stopOverPointArray;
+    [SerializeField] private Transform foodPoint;
+    [SerializeField] private Transform sitPoint;
+    public Transform SitPoint => sitPoint;
+    [SerializeField] private StackContainer foodSetContainer;
     
-
-    private bool isPaymentAvailable = false;
     private bool isStartBreadInsert = false;
+    private bool isOpen = false;
+    public bool IsOpen => isOpen;
     
     private PayState currentPayState = PayState.CustomerWaiting;
     private PaperBag currentPaperBag;
@@ -44,24 +48,27 @@ public class CashDesk : WaitingQueue
         if (usingCustomer != null)
         {
             //Debug.Log("usigSlot 널 아님!");
-            if (isPaymentAvailable && usingCustomer.CurrentState.GetType() == typeof(WaitPayState) &&
+            if (usingCustomer.CurrentState.GetType() == typeof(WaitPayState) &&
                 Vector3.Distance(usingCustomer.transform.position, customerLine.transform.position) <
                 arriveDistance)
             {
                 switch (currentPayState)
                 {
                     case PayState.CustomerWaiting:
-                        usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
-                        usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
-                        usingCustomer.StackCarrier.SetIsContact(true);
-                        GameObject tempPaperBag = poolManager.ActiveObject(paperBagPrefab, paperBagPoint.position,
-                            paperBagPoint.rotation);
-                        tempPaperBag.transform.TryGetComponent(out currentPaperBag);
-                        tempPaperBag.transform.TryGetComponent(out StackableObject stackableObject);
-                        paperBagContainer.GetStackObject(stackableObject);
-                        currentPayState = PayState.PaymentStart;
+                        if (usingCustomer.CurrentState.GetType() == typeof(GetTableState))
+                        {
+                            usingCustomer.StackCarrier.IsFinishGiveEvent += StartPacking;
+                            usingCustomer.StackCarrier.IsFinishGetEvent += DonePayment;
+                            usingCustomer.StackCarrier.SetIsContact(true);
+                            currentPayState = PayState.PaymentStart;
+                        }
                         break;
                     case PayState.PaymentStart:
+                        
+                        StackableObject tempfood = usingCustomer.StackCarrier.GiveStackObject();
+                        usingCustomer.StackCarrier.ClearAndDeactivateAll();
+                        foodSetContainer.GetStackObject(tempfood);
+                        
                         payMoney = usingCustomer.StackCarrier.currentStackNum;
                         usingCustomer.StackCarrier.GiveObject(currentPaperBag.stackContainer, true);
                         currentPayState = PayState.BreadInserting;
@@ -70,7 +77,7 @@ public class CashDesk : WaitingQueue
                         if (currentPaperBag.IsGetAllBread)
                         {
                             currentPaperBag.stackContainer.ClearAndDeactivateAll();
-                            usingCustomer.StackCarrier.GetObject(paperBagContainer);
+                            usingCustomer.StackCarrier.GetObject(foodSetContainer);
                         }
                         break;
                     case PayState.PaymentCompleted:
@@ -139,11 +146,6 @@ public class CashDesk : WaitingQueue
         PaymentCompletedEvent?.Invoke();
     }
 
-    public void SetPaymentAvailable(bool available)
-    {
-        isPaymentAvailable = available;
-    }
-
     public List<Transform> GetFirstWaitPoint()
     {
         return customerLine.GetElements();
@@ -181,6 +183,4 @@ public class CashDesk : WaitingQueue
             currentPayState = PayState.CustomerWaiting;
         }
     }
-    
-    
 }

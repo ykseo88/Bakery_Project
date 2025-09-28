@@ -19,6 +19,14 @@ public class WaitingSlot
     }
 }
 
+public enum PayState
+{
+    CustomerWaiting,
+    PaymentStart,
+    BreadInserting,
+    PaymentCompleted,
+}
+
 public class WaitingQueue : MonoBehaviour
 {
     public List<WaitingSlot> waitingSlots = new List<WaitingSlot>();

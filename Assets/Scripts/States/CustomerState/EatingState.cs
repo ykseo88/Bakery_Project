@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EatBreadState : IUnitState
+public class EatingState : IUnitState
 {
     private CustomerController customerController;
     
-    public EatBreadState(CustomerController customerController) => this.customerController = customerController;
+    public EatingState(CustomerController customerController) => this.customerController = customerController;
+    
+    
     
     public void Enter()
     {
-        customerController.SetDebugCurrentState(ECustomerStates.ToCashDeskState);
+        customerController.SetDebugCurrentState(ECustomerStates.EatingState);
     }
 
     public void Update()

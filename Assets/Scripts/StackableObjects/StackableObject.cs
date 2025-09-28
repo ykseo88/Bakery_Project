@@ -16,6 +16,11 @@ public class StackableObject : MonoBehaviour
     public EStackableObjects type;
     [SerializeField] private SAOMainField mainField;
     public AutoGrid autoGrid;
+    [SerializeField] private float putTimeRate = 1f;
+    [SerializeField] private float putTermRate = 1f;
+    
+    public float PutTimeRate => putTimeRate;
+    public float PutTermRate => putTermRate;
 
     public bool isNoneStack = false;
     
@@ -36,6 +41,7 @@ public class StackableObject : MonoBehaviour
         Debug.Log($"MoveCoroutine started for {name}");
         float currentTime = 0f;
         Quaternion originRot =  transform.rotation;
+        float time = mainField.putTime * putTimeRate;
         
         Vector3 destination = toStackContainer.transform.position;
         Quaternion destRotation = toStackContainer.transform.rotation; // Default rotation
@@ -45,19 +51,17 @@ public class StackableObject : MonoBehaviour
             destination = toStackContainer.autoGrid.nextEmptyWorldPosition;
             destRotation = Quaternion.Euler(toStackContainer.autoGrid.objRotation);
         }
-
-        Debug.Log($"MoveCoroutine loop starting for {name}. putTime: {mainField.putTime}");
-        while (currentTime < mainField.putTime)
+        
+        while (currentTime < time)
         {
             currentTime += Time.deltaTime;
-            transform.position = toStackContainer.GetBezierPoint(start, destination, currentTime / mainField.putTime);
-            transform.rotation = Quaternion.Lerp(originRot, destRotation, currentTime / mainField.putTime);
+            transform.position = toStackContainer.GetBezierPoint(start, toStackContainer.autoGrid.nextEmptyWorldPosition, currentTime / mainField.putTime);
+            transform.rotation = Quaternion.Lerp(originRot, Quaternion.Euler(toStackContainer.autoGrid.objRotation), currentTime / mainField.putTime);
             yield return null;
         }
-        Debug.Log($"MoveCoroutine loop finished for {name}");
+
         
         IsFinishMoveEvent?.Invoke(this);
-        Debug.Log($"IsFinishMoveEvent invoked for {name}");
         
         //Debug.Log($"받는 곳: {toStackContainer.gameObject.name}, 물건 종류: {type}, 현재 받는 곳 타입: {toStackContainer.currentStackObject}");
         if (isDeActive)

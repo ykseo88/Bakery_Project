@@ -17,6 +17,7 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private float goTableProbability;
     public ShowBasket showBasket;
     public CashDesk cashDesk;
+    public EatTable eatTable;
 
     private bool isSpawnable = true;
     public int allowSpawnNum;
