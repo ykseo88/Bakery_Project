@@ -91,6 +91,16 @@ public class StackCarrier : StackContainer
                 Debug.LogWarning($"자신의 스택에서 비활성화된 오브젝트({tempSObj.name})를 발견하여 재활성화합니다.");
             }
 
+            switch (tempSObj.type)
+            {
+                case EStackableObjects.Money:
+                    SoundManager.instance.OnSound(mainField.GetClipByType(EClip.Cost));
+                    break;
+                default:
+                    SoundManager.instance.OnSound(mainField.GetClipByType(EClip.Put));
+                    break;
+            }
+
             IsStartOneMoveEvent?.Invoke(tempSObj);
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.RemoveElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);
@@ -112,6 +122,28 @@ public class StackCarrier : StackContainer
         while (stackContainer.GetCurrentStack().Count > 0 && currentStack.Count < maxStackNum && isContacted)
         {
             StackableObject tempSObj = stackContainer.GiveStackObject();
+            
+            if (tempSObj != null && !tempSObj.gameObject.activeSelf)
+            {
+                tempSObj.gameObject.SetActive(true);
+                tempSObj.transform.position = transform.position;
+                tempSObj.transform.rotation = transform.rotation;
+                Debug.LogWarning($"자신의 스택에서 비활성화된 오브젝트({tempSObj.name})를 발견하여 재활성화합니다.");
+            }
+            
+            switch (tempSObj.type)
+            {
+                case EStackableObjects.Money:
+                    SoundManager.instance.OnSound(mainField.GetClipByType(EClip.GetMoney));
+                    break;
+                case EStackableObjects.Trash:
+                    SoundManager.instance.OnSound(mainField.GetClipByType(EClip.Trash));
+                    break;
+                default:
+                    SoundManager.instance.OnSound(mainField.GetClipByType(EClip.Get));
+                    break;
+            }
+            
             IsStartOneMoveEvent?.Invoke(tempSObj);
             if(tempSObj.autoGrid != null) tempSObj.autoGrid.RemoveElement(tempSObj.transform);
             tempSObj.transform.SetParent(null);

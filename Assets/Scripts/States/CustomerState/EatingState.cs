@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 
-public class EatingState : IUnitState
+public class EatingState : IState
 {
     private static readonly int Sit = Animator.StringToHash("Sitting_Talking");
     private static readonly int WALK = Animator.StringToHash("Defalut_Walk");
@@ -41,7 +41,7 @@ public class EatingState : IUnitState
     public void Update()
     {
         customerController.transform.DOLookAt(eatTable.FoodPoint.position + Vector3.down * offsetY, 0.1f);
-        if(eatTable.UsingCustomer == null) customerController.ChangeState(new ToOutState(customerController, customerController.CustomerManager.centerPoint));
+        if(eatTable.UsingCustomer == null) customerController.ChangeState(new ToOutState(customerController, eatTable.OutPoint));
     }
 
     public void Exit()

@@ -25,6 +25,8 @@ public class EatTable : WaitingQueue
     public Transform SitPoint => sitPoint;
     [SerializeField] private StackContainer foodSetContainer;
     public StackContainer FoodSetContainer => foodSetContainer;
+    [SerializeField] private Transform outPoint;
+    public Transform OutPoint => outPoint;
     
     private bool isOpen = false;
     public bool IsOpen => isOpen;
@@ -98,6 +100,7 @@ public class EatTable : WaitingQueue
                             .GetComponent<StackableObject>();
                         foodSetContainer.GetStackObject(tempTrash);
                         isDirty = true;
+                        usingCustomer.Emoji.OnFloatEmoji();
                         
                         usingCustomer = null;
                         moneyCollector.GetMoney(payMoney);

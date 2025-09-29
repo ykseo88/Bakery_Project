@@ -20,11 +20,27 @@ MonoBehaviour:
   customerMaxStackNum: 0
   maxWantBreadNum: 5
   minWantBreadNum: 1
-  customerSpawnTerm: 0.5
-  goTableProbability: 0.5
-  playerSpeed: 0.1
+  customerSpawnTermMin: 1
+  customerSpawnTermMax: 3
+  goTableProbability: 0.35
+  playerSpeed: 0.04
   playerMaxStackNum: 0
-  SFXVolume: 0
+  SFXVolume: 100
+  cilps:
+  - type: 0
+    clip: {fileID: 8300000, guid: 1c90685b2b05c5940bfa07989c6f85de, type: 3}
+  - type: 1
+    clip: {fileID: 8300000, guid: 165012a9a305ead48be1a389bf3eefb3, type: 3}
+  - type: 2
+    clip: {fileID: 8300000, guid: e993e0b3631dd994aaa0965abfa54cfa, type: 3}
+  - type: 3
+    clip: {fileID: 8300000, guid: 37c43f8291b3cd64e892e9d0de420406, type: 3}
+  - type: 4
+    clip: {fileID: 8300000, guid: a89eaafd61783f94bb3268f0fbd19ae5, type: 3}
+  - type: 5
+    clip: {fileID: 8300000, guid: 0d52b26109161144c8276e66307a7416, type: 3}
+  - type: 6
+    clip: {fileID: 8300000, guid: d2873a3ce161ce14eaf76babebd8d35b, type: 3}
   stackAccessRegister:
   - stackContainer: 1
     stackableObjectAccess:

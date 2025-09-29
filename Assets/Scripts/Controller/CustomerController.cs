@@ -51,6 +51,8 @@ public class CustomerController : UnitController
     private bool isArrivedQueuePoint = false;
     
     private float orginStackAngle;
+    [SerializeField] private FloatEmoji emoji;
+    public FloatEmoji Emoji => emoji;
     
     [SerializeField] private ECustomerStates debugCurrentState;
     

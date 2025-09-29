@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ToState : IUnitState
+public class ToState : IState
 { 
     protected const float rotateDuration = 0.1f;
     protected static readonly int IDLE = Animator.StringToHash("Idle");
@@ -50,7 +50,7 @@ public class ToState : IUnitState
         agent.velocity = Vector3.zero;
     }
 
-    protected void CheckArrivePoint(IUnitState nextState = null)
+    protected void CheckArrivePoint(IState nextState = null)
     {
         customerController.transform.DOLookAt(customerController.transform.position + agent.velocity.normalized, rotateDuration, AxisConstraint.Y);
         if (currentWayPoint == null)

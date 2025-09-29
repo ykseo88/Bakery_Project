@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public TMP_Text moneyAmountText;
     
     public EatTable eatTable;
+    public CashDesk cashDesk;
+    public MoneyConsumer moneyConsumer;
 
     private void Awake()
     {

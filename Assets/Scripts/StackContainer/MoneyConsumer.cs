@@ -12,6 +12,7 @@ public class MoneyConsumer : MonoBehaviour
     private StackInven moneyInven;
     [SerializeField] private GameObject moneyPrefab;
     [SerializeField] private int needMoney;
+    public int NeedMoney => needMoney;
     [SerializeField] private GameObject[] rewardObject;
     [SerializeField] private GameObject[] offObject;
     [SerializeField] private TMP_Text currentNeedMoneyText;
@@ -57,6 +58,8 @@ public class MoneyConsumer : MonoBehaviour
         {
             for(int i = 0; i < rewardObject.Length; i++) rewardObject[i].SetActive(true);
             for(int i = 0; i < offObject.Length; i++) offObject[i].SetActive(false);
+            
+            SoundManager.instance.OnSound(GameManager.Instance.mainField.GetClipByType(EClip.Sucess));
             PayCompleteEvent?.Invoke();
         }
         

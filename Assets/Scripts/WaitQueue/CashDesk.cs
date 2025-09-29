@@ -15,6 +15,7 @@ public class CashDesk : WaitingQueue
     [SerializeField] private ContacktZone contacktZone;
     [SerializeField] private AutoGrid customerLine;
     [SerializeField] private MoneyCollector moneyCollector;
+    public MoneyCollector MoneyCollector => moneyCollector;
     
     [Header("위치")]
     public Transform customerOutPoint;
@@ -28,6 +29,7 @@ public class CashDesk : WaitingQueue
     private PayState currentPayState = PayState.CustomerWaiting;
     private PaperBag currentPaperBag;
     
+    public event Action DonePaymentEvent;
     
 
     private int payMoney = 0;
@@ -77,10 +79,12 @@ public class CashDesk : WaitingQueue
                         }
                         break;
                     case PayState.PaymentCompleted:
+                        DonePaymentEvent?.Invoke();
                         usingCustomer.SetIsGetPaperBag(true);
                         //usingCustomer.StackCarrier.autoGrid.objRotation.y -= rightAngle;
                         usingCustomer.StackCarrier.IsFinishGiveEvent -= StartPacking;
                         usingCustomer.StackCarrier.IsFinishGetEvent -= DonePayment;
+                        usingCustomer.Emoji.OnFloatEmoji();
                         GetWaitingSlotOrNullByCustomer(usingCustomer).Customer = null;
                         usingCustomer = null;
                         moneyCollector.GetMoney(payMoney);

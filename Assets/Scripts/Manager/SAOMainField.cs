@@ -10,6 +10,18 @@ public class SpriteByName
     public Sprite sprite;
 }
 
+public enum EClip
+{
+    Cash, Cost, Get, Put, Sucess, Trash, GetMoney
+}
+
+[Serializable]
+public class ClipByType
+{
+    public EClip type;
+    public AudioClip clip;
+}
+
 [CreateAssetMenu(fileName = "SAOMainField", menuName = "ScriptableObject/Main Field")]
 public class SAOMainField : ScriptableObject
 {
@@ -26,7 +38,8 @@ public class SAOMainField : ScriptableObject
     public int customerMaxStackNum;
     public int maxWantBreadNum;
     public int minWantBreadNum;
-    public float customerSpawnTerm;
+    public float customerSpawnTermMin = 1f;
+    public float customerSpawnTermMax = 3f;
     public float goTableProbability;
     
     [Header("플레이어")]
@@ -35,6 +48,7 @@ public class SAOMainField : ScriptableObject
     
     [Header("오디오")]
     public float SFXVolume;
+    public ClipByType[] cilps;
     
     [Header("스택 관련")]
     public StackAccess[] stackAccessRegister;
@@ -105,6 +119,16 @@ public class SAOMainField : ScriptableObject
         foreach (SpriteByName sprite in SpritesByName)
         {
             if(name == sprite.name) return sprite.sprite;
+        }
+        
+        return null;
+    }
+    
+    public AudioClip GetClipByType(EClip type)
+    {
+        foreach (ClipByType clip in cilps)
+        {
+            if(type == clip.type) return clip.clip;
         }
         
         return null;

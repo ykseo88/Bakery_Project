@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DG.Tweening;
 
-public class WaitBreadState : IUnitState
+public class WaitBreadState : IState
 {
     private const string POS = "Pos";
     
@@ -51,7 +51,7 @@ public class WaitBreadState : IUnitState
         {
             if (isGoTable)
             {
-                if (eatTable.IsOpen)
+                if (eatTable.IsOpen && !eatTable.IsDirty && eatTable.Count == 0 && eatTable.UsingCustomer == null)
                 {
                     customerController.ChangeState((new GetTableState(customerController, true)));
                 }

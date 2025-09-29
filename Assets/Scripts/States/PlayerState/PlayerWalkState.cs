@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerWalkState : IUnitState
+public class PlayerWalkState : IState
 {
     private static readonly int IDLE = Animator.StringToHash("Idle");
     private static readonly int WALK = Animator.StringToHash("Walk");

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -57,7 +58,8 @@ public class CustomerManager : MonoBehaviour
 
     private IEnumerator CoolSpawnTerm()
     {
-        yield return new WaitForSeconds(mainField.customerSpawnTerm);
+        float rand = Random.Range(mainField.customerSpawnTermMin,  mainField.customerSpawnTermMax);
+        yield return new WaitForSeconds(rand);
         isSpawnable = true;
     }
 

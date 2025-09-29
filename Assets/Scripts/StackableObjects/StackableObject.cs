@@ -9,6 +9,7 @@ public enum EStackableObjects
     Bread,
     Money,
     PaperBag,
+    Trash
 }
 
 public class StackableObject : MonoBehaviour
@@ -62,6 +63,7 @@ public class StackableObject : MonoBehaviour
 
         
         IsFinishMoveEvent?.Invoke(this);
+        
         
         //Debug.Log($"받는 곳: {toStackContainer.gameObject.name}, 물건 종류: {type}, 현재 받는 곳 타입: {toStackContainer.currentStackObject}");
         if (isDeActive)

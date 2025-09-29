@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoneState : IUnitState
+public class NoneState : IState
 {
     private CustomerController customerController;
     public NoneState(CustomerController customerController) => this.customerController = customerController;

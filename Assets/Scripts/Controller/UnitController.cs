@@ -10,8 +10,8 @@ public class UnitController : MonoBehaviour
     [SerializeField] protected SAOMainField mainField;
     public SAOMainField MainField => mainField;
     
-    protected IUnitState currentState;
-    public IUnitState CurrentState => currentState;
+    protected IState currentState;
+    public IState CurrentState => currentState;
 
     protected virtual void Start()
     {
@@ -23,7 +23,7 @@ public class UnitController : MonoBehaviour
         currentState.Update();
     }
     
-    public void ChangeState(IUnitState newState)
+    public void ChangeState(IState newState)
     {
         currentState?.Exit();
         currentState = newState;

@@ -19,6 +19,8 @@ public class GetTableState : ToState
     {
         customerController.SetDebugCurrentState(ECustomerStates.GetTableState);
         
+        customerController.stateBubble.SetActive(false);
+        
         eatTable = customerController.CustomerManager.eatTable;
         
         if(eatTable.Count == 0) eatTable.SetWaitingState();

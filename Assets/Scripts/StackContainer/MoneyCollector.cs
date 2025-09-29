@@ -12,6 +12,7 @@ public class MoneyCollector : MonoBehaviour
     [SerializeField] private GameObject MoneyPrefab;
     private StackContainer moneyInven;
     [SerializeField] private int currentMoney;
+    public int CurrentMoney => currentMoney;
     private UnitController currentUnit;
     private StackCarrier stackCarrier;
     private LayerMask UnitLayer;
@@ -41,6 +42,7 @@ public class MoneyCollector : MonoBehaviour
             moneyInven.GetStackObject(stackObj);
         }
         currentMoney += moneyAmount;
+        SoundManager.instance.OnSound(GameManager.Instance.mainField.GetClipByType(EClip.Cash));
     }
     
     private void CollectMoney(StackableObject stackObj)

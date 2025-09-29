@@ -4,7 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaitState : IUnitState
+public class WaitState : IState
 {
     protected const float rotateDuration = 0.1f;
     protected static readonly int IDLE = Animator.StringToHash("Idle");
@@ -44,7 +44,7 @@ public class WaitState : IUnitState
         else animator.ResetTrigger(IDLE);
     }
 
-    protected void CheckWait(IUnitState nextState, Vector3 seeAngle, bool isMyTurn = false)
+    protected void CheckWait(IState nextState, Vector3 seeAngle, bool isMyTurn = false)
     {
         customerController.transform.DOLookAt(seeAngle, rotateDuration, AxisConstraint.Y);
         
